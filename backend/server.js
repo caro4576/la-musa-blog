@@ -42,6 +42,49 @@ app.post("/api/obras", async (req, res) => {
     });
   }
 });
+app.put("/api/obras/:id", async (req, res) => {
+  try {
+    const obraActualizada = await Obra.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true, runValidators: true },
+    );
+
+    if (!obraActualizada) {
+      return res.status(404).json({
+        mensaje: "Obra no encontrada",
+      });
+    }
+
+    res.json(obraActualizada);
+  } catch (error) {
+    res.status(400).json({
+      mensaje: "Error al actualizar la obra",
+      error: error.message,
+    });
+  }
+});
+app.delete("/api/obras/:id", async (req, res) => {
+  try {
+    const obraEliminada = await Obra.findByIdAndDelete(req.params.id);
+
+    if (!obraEliminada) {
+      return res.status(404).json({
+        mensaje: "Obra no encontrada",
+      });
+    }
+
+    res.json({
+      mensaje: "Obra eliminada correctamente",
+      obra: obraEliminada,
+    });
+  } catch (error) {
+    res.status(400).json({
+      mensaje: "Error al eliminar la obra",
+      error: error.message,
+    });
+  }
+});
 
 app.listen(PORT, () => {
   console.log(`Servidor ejecutándose en http://localhost:${PORT}`);
