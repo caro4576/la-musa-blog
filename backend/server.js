@@ -3,6 +3,7 @@ const Obra = require("./models/obra");
 const express = require("express");
 
 const app = express();
+app.use("/admin", express.static("../admin"));
 app.use(express.json());
 
 const PORT = 3000;
