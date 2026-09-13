@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <title>Admin — La Musa Incarnata</title>
+    </head>
+    
+    <body>
+        
+        <header>
+            <h1>La Musa Incarnata</h1>
+            <p>Panel de administración</p>
+        </header>
+        
+        <main>
+            
+            <section>
+                <h2>Obras</h2>
+                
+                <form id="form-obra">
+                
+                    <h3>Nueva obra</h3>
+                
+                    <input type="text" id="titulo" placeholder="Título de la obra" required>
+                
+                    <input type="text" id="categoria" placeholder="Categoría" required>
+                
+                    <button type="submit">
+                        Guardar obra
+                    </button>
+                
+                </form>
+            </section>
+            
+            <section>
+                <h2>Obras existentes</h2>
+                
+                <div id="lista-obras">
+                    <!-- Las obras aparecerán acá desde MongoDB -->
+                </div>
+            </section>
+            
+        </main>
+        
+        <script src="admin.js"></script>
+    </body>
+
+</html>
