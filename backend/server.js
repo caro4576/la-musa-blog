@@ -32,6 +32,7 @@ app.get("/api/obras", async (req, res) => {
   }
 });
 app.post("/api/obras", async (req, res) => {
+  console.log("DATOS RECIBIDOS:", req.body);
   try {
     const nuevaObra = await Obra.create(req.body);
 

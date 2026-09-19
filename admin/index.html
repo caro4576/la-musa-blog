@@ -27,9 +27,29 @@
                     <input type="text" id="titulo" placeholder="Título de la obra" required>
                 
                     <input type="text" id="categoria" placeholder="Categoría" required>
+
+                    <textarea id="descripcion" placeholder="Descripción de la obra" rows="5"></textarea>
                 
                     <button type="submit">
                         Guardar obra
+                    </button>
+                
+                </form>
+                <form id="form-editar-obra" style="display: none;">
+                
+                    <h3>Editar obra</h3>
+                
+                    <input type="text" id="editar-titulo" placeholder="Título de la obra" required>
+                
+                    <input type="text" id="editar-categoria" placeholder="Categoría" required>
+                   
+                
+                    <button type="submit">
+                        Guardar cambios
+                    </button>
+                
+                    <button type="button" id="cancelar-edicion">
+                        Cancelar
                     </button>
                 
                 </form>

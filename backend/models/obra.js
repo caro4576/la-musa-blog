@@ -5,10 +5,15 @@ const obraSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+
   categoria: {
     type: String,
     required: true,
   },
+
+  descripcion: {
+    type: String,
+  }
 });
 
 const Obra = mongoose.model("Obra", obraSchema);
