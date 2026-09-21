@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Obra = require("./models/obra");
+const Escritura = require("./models/escritura");
 const express = require("express");
 
 const app = express();
@@ -87,7 +88,117 @@ app.delete("/api/obras/:id", async (req, res) => {
     });
   }
 });
+// ===============================
+// CRUD DE ESCRITURAS
+// ===============================
 
+// GET todas las escrituras
+app.get("/api/escrituras", async (req, res) => {
+    try {
+        const escrituras = await Escritura.find();
+        res.json(escrituras);
+    } catch (error) {
+        res.status(500).json({
+            error: "Error al obtener las escrituras"
+        });
+    }
+});
+
+// GET una escritura por ID
+app.get("/api/escrituras/:id", async (req, res) => {
+    try {
+        const escritura = await Escritura.findById(req.params.id);
+
+        if (!escritura) {
+            return res.status(404).json({
+                error: "Escritura no encontrada"
+            });
+        }
+
+        res.json(escritura);
+    } catch (error) {
+        res.status(500).json({
+            error: "Error al obtener la escritura"
+        });
+    }
+});
+
+// POST crear escritura
+app.post("/api/escrituras", async (req, res) => {
+    try {
+        const { titulo, categoria, contenido } = req.body;
+
+        const nuevaEscritura = new Escritura({
+            titulo,
+            categoria,
+            contenido
+        });
+
+        const escrituraGuardada = await nuevaEscritura.save();
+
+        res.status(201).json(escrituraGuardada);
+    } catch (error) {
+        res.status(400).json({
+            error: "Error al crear la escritura"
+        });
+    }
+});
+
+// PUT editar escritura
+app.put("/api/escrituras/:id", async (req, res) => {
+    try {
+        const { titulo, categoria, contenido } = req.body;
+
+        const escrituraActualizada = await Escritura.findByIdAndUpdate(
+            req.params.id,
+            {
+                titulo,
+                categoria,
+                contenido
+            },
+            {
+                new: true,
+                runValidators: true
+            }
+        );
+
+        if (!escrituraActualizada) {
+            return res.status(404).json({
+                error: "Escritura no encontrada"
+            });
+        }
+
+        res.json(escrituraActualizada);
+    } catch (error) {
+        res.status(400).json({
+            error: "Error al actualizar la escritura"
+        });
+    }
+});
+
+// DELETE eliminar escritura
+app.delete("/api/escrituras/:id", async (req, res) => {
+    try {
+        const escrituraEliminada = await Escritura.findByIdAndDelete(
+            req.params.id
+        );
+
+        if (!escrituraEliminada) {
+            return res.status(404).json({
+                error: "Escritura no encontrada"
+            });
+        }
+
+        res.json({
+            mensaje: "Escritura eliminada correctamente",
+            escritura: escrituraEliminada
+        });
+    } catch (error) {
+        res.status(500).json({
+            error: "Error al eliminar la escritura"
+        });
+    }
+});
 app.listen(PORT, () => {
   console.log(`Servidor ejecutándose en http://localhost:${PORT}`);
 });

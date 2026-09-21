@@ -6,8 +6,15 @@ const editarTitulo = document.querySelector("#editar-titulo");
 const editarCategoria = document.querySelector("#editar-categoria");
 const cancelarEdicion = document.querySelector("#cancelar-edicion");
 const descripcion = document.querySelector("#descripcion");
+const editarDescripcion = document.querySelector("#editar-descripcion");
+const listaEscrituras = document.querySelector("#lista-escrituras");
+const formEscritura = document.querySelector("#form-escritura");
 
 let obraEditandoId = null;
+
+// ===============================
+// ADMIN DE OBRAS
+// ===============================
 
 function cargarObras() {
 
@@ -30,6 +37,7 @@ function cargarObras() {
 
          editarTitulo.value = obra.titulo;
          editarCategoria.value = obra.categoria;
+         editarDescripcion.value = obra.descripcion || "";
 
 
           formEditarObra.style.display = "block";
@@ -105,6 +113,8 @@ formEditarObra.addEventListener("submit", (event) => {
 
   const nuevoTitulo = editarTitulo.value;
   const nuevaCategoria = editarCategoria.value;
+  const nuevaDescripcion = editarDescripcion.value;
+
 
   fetch(`http://localhost:3000/api/obras/${obraEditandoId}`, {
     method: "PUT",
@@ -114,6 +124,7 @@ formEditarObra.addEventListener("submit", (event) => {
     body: JSON.stringify({
       titulo: nuevoTitulo,
       categoria: nuevaCategoria,
+      descripcion: nuevaDescripcion
     }),
   })
     .then((response) => response.json())
@@ -134,4 +145,105 @@ cancelarEdicion.addEventListener("click", () => {
   obraEditandoId = null;
 
   formEditarObra.style.display = "none";
+});
+// ===============================
+// ADMIN DE ESCRITURAS
+// ===============================
+
+
+
+function cargarEscrituras() {
+    listaEscrituras.innerHTML = "";
+
+    fetch("http://localhost:3000/api/escrituras")
+        .then(response => response.json())
+        .then(escrituras => {
+
+            escrituras.forEach(escritura => {
+
+                const elemento = document.createElement("div");
+
+              elemento.textContent = `${escritura.titulo} — ${escritura.categoria} — ${escritura.contenido}`;
+
+                const botonEliminar = document.createElement("button");
+                botonEliminar.textContent = "Eliminar";
+
+                botonEliminar.addEventListener("click", () => {
+
+                    const confirmar = confirm(
+                        `¿Seguro que querés eliminar "${escritura.titulo}"?`
+                    );
+
+                    if (!confirmar) {
+                        return;
+                    }
+
+                    fetch(
+                        `http://localhost:3000/api/escrituras/${escritura._id}`,
+                        {
+                            method: "DELETE"
+                        }
+                    )
+                        .then(response => response.json())
+                        .then(resultado => {
+                            console.log(resultado);
+                            cargarEscrituras();
+                        })
+                        .catch(error => {
+                            console.error(
+                                "Error al eliminar la escritura:",
+                                error
+                            );
+                        });
+                });
+
+                elemento.appendChild(botonEliminar);
+                listaEscrituras.appendChild(elemento);
+            });
+        })
+        .catch(error => {
+            console.error(
+                "Error al obtener las escrituras:",
+                error
+            );
+        });
+}
+
+cargarEscrituras();
+
+formEscritura.addEventListener("submit", event => {
+
+    event.preventDefault();
+
+    const titulo = document.querySelector("#escritura-titulo").value;
+    const categoria = document.querySelector("#escritura-categoria").value;
+  const contenido = document.querySelector("#escritura-contenido").value;
+  console.log("Contenido:", contenido);
+
+    fetch("http://localhost:3000/api/escrituras", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            titulo,
+            categoria,
+            contenido
+        })
+    })
+        .then(response => response.json())
+        .then(escritura => {
+
+            console.log("Escritura creada:", escritura);
+
+            formEscritura.reset();
+
+            cargarEscrituras();
+        })
+        .catch(error => {
+            console.error(
+                "Error al crear la escritura:",
+                error
+            );
+        });
 });
