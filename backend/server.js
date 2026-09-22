@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const Obra = require("./models/obra");
 const Escritura = require("./models/escritura");
 const express = require("express");
+const Libro = require("./models/libro");
 
 const app = express();
 app.use("/admin", express.static("../admin"));
@@ -196,6 +197,129 @@ app.delete("/api/escrituras/:id", async (req, res) => {
     } catch (error) {
         res.status(500).json({
             error: "Error al eliminar la escritura"
+        });
+    }
+});
+// ===============================
+// CRUD DE LIBROS
+// ===============================
+
+// GET todos los libros
+app.get("/api/libros", async (req, res) => {
+    try {
+        const libros = await Libro.find();
+        res.json(libros);
+    } catch (error) {
+        res.status(500).json({
+            error: "Error al obtener los libros"
+        });
+    }
+});
+
+// GET un libro por ID
+app.get("/api/libros/:id", async (req, res) => {
+    try {
+        const libro = await Libro.findById(req.params.id);
+
+        if (!libro) {
+            return res.status(404).json({
+                error: "Libro no encontrado"
+            });
+        }
+
+        res.json(libro);
+    } catch (error) {
+        res.status(500).json({
+            error: "Error al obtener el libro"
+        });
+    }
+});
+
+// POST crear libro
+app.post("/api/libros", async (req, res) => {
+    try {
+        const {
+            titulo,
+            descripcion,
+            fecha,
+            enlace
+        } = req.body;
+
+        const nuevoLibro = new Libro({
+            titulo,
+            descripcion,
+            fecha,
+            enlace
+        });
+
+        const libroGuardado = await nuevoLibro.save();
+
+        res.status(201).json(libroGuardado);
+    } catch (error) {
+        res.status(400).json({
+            error: "Error al crear el libro"
+        });
+    }
+});
+
+// PUT editar libro
+app.put("/api/libros/:id", async (req, res) => {
+    try {
+        const {
+            titulo,
+            descripcion,
+            fecha,
+            enlace
+        } = req.body;
+
+        const libroActualizado = await Libro.findByIdAndUpdate(
+            req.params.id,
+            {
+                titulo,
+                descripcion,
+                fecha,
+                enlace
+            },
+            {
+                new: true,
+                runValidators: true
+            }
+        );
+
+        if (!libroActualizado) {
+            return res.status(404).json({
+                error: "Libro no encontrado"
+            });
+        }
+
+        res.json(libroActualizado);
+    } catch (error) {
+        res.status(400).json({
+            error: "Error al actualizar el libro"
+        });
+    }
+});
+
+// DELETE eliminar libro
+app.delete("/api/libros/:id", async (req, res) => {
+    try {
+        const libroEliminado = await Libro.findByIdAndDelete(
+            req.params.id
+        );
+
+        if (!libroEliminado) {
+            return res.status(404).json({
+                error: "Libro no encontrado"
+            });
+        }
+
+        res.json({
+            mensaje: "Libro eliminado correctamente",
+            libro: libroEliminado
+        });
+    } catch (error) {
+        res.status(500).json({
+            error: "Error al eliminar el libro"
         });
     }
 });
