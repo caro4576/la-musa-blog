@@ -4,8 +4,92 @@ const Escritura = require("./models/escritura");
 const express = require("express");
 const Libro = require("./models/libro");
 const path = require("path");
+const crypto = require("crypto");
 
 const app = express();
+
+const ADMIN_USER = process.env.ADMIN_USER;
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
+const ADMIN_AUTH_SECRET = process.env.ADMIN_AUTH_SECRET;
+const ADMIN_SESSION_MS = 8 * 60 * 60 * 1000;
+
+function base64url(value) {
+  return Buffer.from(value).toString("base64url");
+}
+
+function crearTokenAdmin(usuario) {
+  const payload = {
+    sub: usuario,
+    exp: Date.now() + ADMIN_SESSION_MS,
+  };
+
+  const datos = base64url(JSON.stringify(payload));
+  const firma = crypto
+    .createHmac("sha256", ADMIN_AUTH_SECRET)
+    .update(datos)
+    .digest("base64url");
+
+  return `${datos}.${firma}`;
+}
+
+function obtenerCookie(req, nombre) {
+  const cookies = req.headers.cookie || "";
+
+  for (const parte of cookies.split(";")) {
+    const [clave, ...valor] = parte.trim().split("=");
+
+    if (clave === nombre) {
+      return decodeURIComponent(valor.join("="));
+    }
+  }
+
+  return null;
+}
+
+function tokenAdminValido(token) {
+  if (!token || !ADMIN_AUTH_SECRET) return false;
+
+  const partes = token.split(".");
+  if (partes.length !== 2) return false;
+
+  const [datos, firma] = partes;
+  const firmaEsperada = crypto
+    .createHmac("sha256", ADMIN_AUTH_SECRET)
+    .update(datos)
+    .digest("base64url");
+
+  if (firma.length !== firmaEsperada.length) return false;
+
+  const coincide = crypto.timingSafeEqual(
+    Buffer.from(firma),
+    Buffer.from(firmaEsperada),
+  );
+
+  if (!coincide) return false;
+
+  try {
+    const payload = JSON.parse(Buffer.from(datos, "base64url").toString("utf8"));
+    return payload.exp > Date.now() && payload.sub === ADMIN_USER;
+  } catch {
+    return false;
+  }
+}
+
+function adminAutenticado(req) {
+  return tokenAdminValido(obtenerCookie(req, "__Host-LaMusaAdmin"));
+}
+
+function requireAdmin(req, res, next) {
+  if (!adminAutenticado(req)) {
+    if (req.path.startsWith("/admin")) {
+      return res.redirect("/admin/login.html");
+    }
+
+    return res.status(401).json({ error: "No autorizado" });
+  }
+
+  next();
+}
 
 app.use((req, res, next) => {
   const origenesPermitidos = [
@@ -31,8 +115,74 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use("/admin", express.static(path.join(__dirname, "admin")));
+const adminPath = path.join(__dirname, "admin");
+
 app.use(express.json());
+
+app.get("/admin/login.html", (req, res) => {
+  res.sendFile(path.join(adminPath, "login.html"));
+});
+
+app.get("/admin/login.js", (req, res) => {
+  res.sendFile(path.join(adminPath, "login.js"));
+});
+
+app.post("/api/login", (req, res) => {
+  if (!ADMIN_USER || !ADMIN_PASSWORD || !ADMIN_AUTH_SECRET) {
+    return res.status(500).json({
+      error: "El acceso del administrador no está configurado en el servidor.",
+    });
+  }
+
+  const { usuario, password } = req.body;
+
+  const usuarioCorrecto =
+    typeof usuario === "string" &&
+    usuario === ADMIN_USER;
+
+  const passwordCorrecta =
+    typeof password === "string" &&
+    password === ADMIN_PASSWORD;
+
+  if (!usuarioCorrecto || !passwordCorrecta) {
+    return res.status(401).json({
+      error: "Usuario o contraseña incorrectos.",
+    });
+  }
+
+  const token = crearTokenAdmin(usuario);
+
+  res
+    .cookie("__Host-LaMusaAdmin", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "strict",
+      path: "/",
+      maxAge: ADMIN_SESSION_MS,
+    })
+    .json({ ok: true });
+});
+
+app.post("/api/logout", (req, res) => {
+  res.clearCookie("__Host-LaMusaAdmin", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "strict",
+    path: "/",
+  });
+
+  res.json({ ok: true });
+});
+
+app.get("/admin", requireAdmin, (req, res) => {
+  res.sendFile(path.join(adminPath, "index.html"));
+});
+
+app.get("/admin/", requireAdmin, (req, res) => {
+  res.sendFile(path.join(adminPath, "index.html"));
+});
+
+app.use("/admin", requireAdmin, express.static(adminPath, { index: false }));
 
 const PORT = process.env.PORT || 3000;
 mongoose;
@@ -60,7 +210,7 @@ app.get("/api/obras", async (req, res) => {
     });
   }
 });
-app.post("/api/obras", async (req, res) => {
+app.post("/api/obras", requireAdmin, async (req, res) => {
   console.log("DATOS RECIBIDOS:", req.body);
   try {
     const nuevaObra = await Obra.create(req.body);
@@ -73,7 +223,7 @@ app.post("/api/obras", async (req, res) => {
     });
   }
 });
-app.put("/api/obras/:id", async (req, res) => {
+app.put("/api/obras/:id", requireAdmin, async (req, res) => {
   try {
     const obraActualizada = await Obra.findByIdAndUpdate(
       req.params.id,
@@ -95,7 +245,7 @@ app.put("/api/obras/:id", async (req, res) => {
     });
   }
 });
-app.delete("/api/obras/:id", async (req, res) => {
+app.delete("/api/obras/:id", requireAdmin, async (req, res) => {
   try {
     const obraEliminada = await Obra.findByIdAndDelete(req.params.id);
 
@@ -152,7 +302,7 @@ app.get("/api/escrituras/:id", async (req, res) => {
 });
 
 // POST crear escritura
-app.post("/api/escrituras", async (req, res) => {
+app.post("/api/escrituras", requireAdmin, async (req, res) => {
   try {
     const { titulo, categoria, contenido } = req.body;
 
@@ -173,7 +323,7 @@ app.post("/api/escrituras", async (req, res) => {
 });
 
 // PUT editar escritura
-app.put("/api/escrituras/:id", async (req, res) => {
+app.put("/api/escrituras/:id", requireAdmin, async (req, res) => {
   try {
     const { titulo, categoria, contenido } = req.body;
 
@@ -205,7 +355,7 @@ app.put("/api/escrituras/:id", async (req, res) => {
 });
 
 // DELETE eliminar escritura
-app.delete("/api/escrituras/:id", async (req, res) => {
+app.delete("/api/escrituras/:id", requireAdmin, async (req, res) => {
   try {
     const escrituraEliminada = await Escritura.findByIdAndDelete(req.params.id);
 
@@ -261,7 +411,7 @@ app.get("/api/libros/:id", async (req, res) => {
 });
 
 // POST crear libro
-app.post("/api/libros", async (req, res) => {
+app.post("/api/libros", requireAdmin, async (req, res) => {
   try {
     const { titulo, descripcion, fecha, enlace } = req.body;
 
@@ -283,7 +433,7 @@ app.post("/api/libros", async (req, res) => {
 });
 
 // PUT editar libro
-app.put("/api/libros/:id", async (req, res) => {
+app.put("/api/libros/:id", requireAdmin, async (req, res) => {
   try {
     const { titulo, descripcion, fecha, enlace } = req.body;
 
@@ -316,7 +466,7 @@ app.put("/api/libros/:id", async (req, res) => {
 });
 
 // DELETE eliminar libro
-app.delete("/api/libros/:id", async (req, res) => {
+app.delete("/api/libros/:id", requireAdmin, async (req, res) => {
   try {
     const libroEliminado = await Libro.findByIdAndDelete(req.params.id);
 
