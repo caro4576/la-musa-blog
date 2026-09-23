@@ -31,7 +31,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use("/admin", express.static(path.join(__dirname, "..", "admin")));
+app.use("/admin", express.static(path.join(__dirname, "admin")));
 app.use(express.json());
 
 const PORT = process.env.PORT || 3000;
