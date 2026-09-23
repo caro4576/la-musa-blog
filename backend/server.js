@@ -152,24 +152,19 @@ app.post("/api/login", (req, res) => {
 
   const token = crearTokenAdmin(usuario);
 
-  res
-    .cookie("__Host-LaMusaAdmin", token, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "strict",
-      path: "/",
-      maxAge: ADMIN_SESSION_MS,
-    })
-    .json({ ok: true });
+  res.setHeader(
+    "Set-Cookie",
+    `__Host-LaMusaAdmin=${token}; Max-Age=${ADMIN_SESSION_MS / 1000}; Path=/; HttpOnly; Secure; SameSite=Strict`,
+  );
+
+  res.json({ ok: true });
 });
 
 app.post("/api/logout", (req, res) => {
-  res.clearCookie("__Host-LaMusaAdmin", {
-    httpOnly: true,
-    secure: true,
-    sameSite: "strict",
-    path: "/",
-  });
+  res.setHeader(
+    "Set-Cookie",
+    "__Host-LaMusaAdmin=; Max-Age=0; Path=/; HttpOnly; Secure; SameSite=Strict",
+  );
 
   res.json({ ok: true });
 });
