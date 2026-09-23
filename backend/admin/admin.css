@@ -92,6 +92,8 @@ button{cursor:pointer}
     text-transform:uppercase;
     color:var(--gris-claro);
 }
+.admin-header-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.btn-logout{margin-top:0}
 .admin-status span{
     display:inline-block;
     width:7px;height:7px;border-radius:50%;
