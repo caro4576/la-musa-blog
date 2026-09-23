@@ -8,9 +8,10 @@ const app = express();
 app.use("/admin", express.static("../admin"));
 app.use(express.json());
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
+mongoose;
 mongoose
-  .connect("mongodb://127.0.0.1:27017/la_musa")
+  .connect(process.env.MONGO_URI || "mongodb://127.0.0.1:27017/la_musa")
   .then(() => {
     console.log("MongoDB conectado correctamente");
   })
@@ -95,110 +96,108 @@ app.delete("/api/obras/:id", async (req, res) => {
 
 // GET todas las escrituras
 app.get("/api/escrituras", async (req, res) => {
-    try {
-        const escrituras = await Escritura.find();
-        res.json(escrituras);
-    } catch (error) {
-        res.status(500).json({
-            error: "Error al obtener las escrituras"
-        });
-    }
+  try {
+    const escrituras = await Escritura.find();
+    res.json(escrituras);
+  } catch (error) {
+    res.status(500).json({
+      error: "Error al obtener las escrituras",
+    });
+  }
 });
 
 // GET una escritura por ID
 app.get("/api/escrituras/:id", async (req, res) => {
-    try {
-        const escritura = await Escritura.findById(req.params.id);
+  try {
+    const escritura = await Escritura.findById(req.params.id);
 
-        if (!escritura) {
-            return res.status(404).json({
-                error: "Escritura no encontrada"
-            });
-        }
-
-        res.json(escritura);
-    } catch (error) {
-        res.status(500).json({
-            error: "Error al obtener la escritura"
-        });
+    if (!escritura) {
+      return res.status(404).json({
+        error: "Escritura no encontrada",
+      });
     }
+
+    res.json(escritura);
+  } catch (error) {
+    res.status(500).json({
+      error: "Error al obtener la escritura",
+    });
+  }
 });
 
 // POST crear escritura
 app.post("/api/escrituras", async (req, res) => {
-    try {
-        const { titulo, categoria, contenido } = req.body;
+  try {
+    const { titulo, categoria, contenido } = req.body;
 
-        const nuevaEscritura = new Escritura({
-            titulo,
-            categoria,
-            contenido
-        });
+    const nuevaEscritura = new Escritura({
+      titulo,
+      categoria,
+      contenido,
+    });
 
-        const escrituraGuardada = await nuevaEscritura.save();
+    const escrituraGuardada = await nuevaEscritura.save();
 
-        res.status(201).json(escrituraGuardada);
-    } catch (error) {
-        res.status(400).json({
-            error: "Error al crear la escritura"
-        });
-    }
+    res.status(201).json(escrituraGuardada);
+  } catch (error) {
+    res.status(400).json({
+      error: "Error al crear la escritura",
+    });
+  }
 });
 
 // PUT editar escritura
 app.put("/api/escrituras/:id", async (req, res) => {
-    try {
-        const { titulo, categoria, contenido } = req.body;
+  try {
+    const { titulo, categoria, contenido } = req.body;
 
-        const escrituraActualizada = await Escritura.findByIdAndUpdate(
-            req.params.id,
-            {
-                titulo,
-                categoria,
-                contenido
-            },
-            {
-                new: true,
-                runValidators: true
-            }
-        );
+    const escrituraActualizada = await Escritura.findByIdAndUpdate(
+      req.params.id,
+      {
+        titulo,
+        categoria,
+        contenido,
+      },
+      {
+        new: true,
+        runValidators: true,
+      },
+    );
 
-        if (!escrituraActualizada) {
-            return res.status(404).json({
-                error: "Escritura no encontrada"
-            });
-        }
-
-        res.json(escrituraActualizada);
-    } catch (error) {
-        res.status(400).json({
-            error: "Error al actualizar la escritura"
-        });
+    if (!escrituraActualizada) {
+      return res.status(404).json({
+        error: "Escritura no encontrada",
+      });
     }
+
+    res.json(escrituraActualizada);
+  } catch (error) {
+    res.status(400).json({
+      error: "Error al actualizar la escritura",
+    });
+  }
 });
 
 // DELETE eliminar escritura
 app.delete("/api/escrituras/:id", async (req, res) => {
-    try {
-        const escrituraEliminada = await Escritura.findByIdAndDelete(
-            req.params.id
-        );
+  try {
+    const escrituraEliminada = await Escritura.findByIdAndDelete(req.params.id);
 
-        if (!escrituraEliminada) {
-            return res.status(404).json({
-                error: "Escritura no encontrada"
-            });
-        }
-
-        res.json({
-            mensaje: "Escritura eliminada correctamente",
-            escritura: escrituraEliminada
-        });
-    } catch (error) {
-        res.status(500).json({
-            error: "Error al eliminar la escritura"
-        });
+    if (!escrituraEliminada) {
+      return res.status(404).json({
+        error: "Escritura no encontrada",
+      });
     }
+
+    res.json({
+      mensaje: "Escritura eliminada correctamente",
+      escritura: escrituraEliminada,
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: "Error al eliminar la escritura",
+    });
+  }
 });
 // ===============================
 // CRUD DE LIBROS
@@ -206,122 +205,110 @@ app.delete("/api/escrituras/:id", async (req, res) => {
 
 // GET todos los libros
 app.get("/api/libros", async (req, res) => {
-    try {
-        const libros = await Libro.find();
-        res.json(libros);
-    } catch (error) {
-        res.status(500).json({
-            error: "Error al obtener los libros"
-        });
-    }
+  try {
+    const libros = await Libro.find();
+    res.json(libros);
+  } catch (error) {
+    res.status(500).json({
+      error: "Error al obtener los libros",
+    });
+  }
 });
 
 // GET un libro por ID
 app.get("/api/libros/:id", async (req, res) => {
-    try {
-        const libro = await Libro.findById(req.params.id);
+  try {
+    const libro = await Libro.findById(req.params.id);
 
-        if (!libro) {
-            return res.status(404).json({
-                error: "Libro no encontrado"
-            });
-        }
-
-        res.json(libro);
-    } catch (error) {
-        res.status(500).json({
-            error: "Error al obtener el libro"
-        });
+    if (!libro) {
+      return res.status(404).json({
+        error: "Libro no encontrado",
+      });
     }
+
+    res.json(libro);
+  } catch (error) {
+    res.status(500).json({
+      error: "Error al obtener el libro",
+    });
+  }
 });
 
 // POST crear libro
 app.post("/api/libros", async (req, res) => {
-    try {
-        const {
-            titulo,
-            descripcion,
-            fecha,
-            enlace
-        } = req.body;
+  try {
+    const { titulo, descripcion, fecha, enlace } = req.body;
 
-        const nuevoLibro = new Libro({
-            titulo,
-            descripcion,
-            fecha,
-            enlace
-        });
+    const nuevoLibro = new Libro({
+      titulo,
+      descripcion,
+      fecha,
+      enlace,
+    });
 
-        const libroGuardado = await nuevoLibro.save();
+    const libroGuardado = await nuevoLibro.save();
 
-        res.status(201).json(libroGuardado);
-    } catch (error) {
-        res.status(400).json({
-            error: "Error al crear el libro"
-        });
-    }
+    res.status(201).json(libroGuardado);
+  } catch (error) {
+    res.status(400).json({
+      error: "Error al crear el libro",
+    });
+  }
 });
 
 // PUT editar libro
 app.put("/api/libros/:id", async (req, res) => {
-    try {
-        const {
-            titulo,
-            descripcion,
-            fecha,
-            enlace
-        } = req.body;
+  try {
+    const { titulo, descripcion, fecha, enlace } = req.body;
 
-        const libroActualizado = await Libro.findByIdAndUpdate(
-            req.params.id,
-            {
-                titulo,
-                descripcion,
-                fecha,
-                enlace
-            },
-            {
-                new: true,
-                runValidators: true
-            }
-        );
+    const libroActualizado = await Libro.findByIdAndUpdate(
+      req.params.id,
+      {
+        titulo,
+        descripcion,
+        fecha,
+        enlace,
+      },
+      {
+        new: true,
+        runValidators: true,
+      },
+    );
 
-        if (!libroActualizado) {
-            return res.status(404).json({
-                error: "Libro no encontrado"
-            });
-        }
-
-        res.json(libroActualizado);
-    } catch (error) {
-        res.status(400).json({
-            error: "Error al actualizar el libro"
-        });
+    if (!libroActualizado) {
+      return res.status(404).json({
+        error: "Libro no encontrado",
+      });
     }
+
+    res.json(libroActualizado);
+  } catch (error) {
+    res.status(400).json({
+      error: "Error al actualizar el libro",
+    });
+  }
 });
 
 // DELETE eliminar libro
 app.delete("/api/libros/:id", async (req, res) => {
-    try {
-        const libroEliminado = await Libro.findByIdAndDelete(
-            req.params.id
-        );
+  try {
+    const libroEliminado = await Libro.findByIdAndDelete(req.params.id);
 
-        if (!libroEliminado) {
-            return res.status(404).json({
-                error: "Libro no encontrado"
-            });
-        }
-
-        res.json({
-            mensaje: "Libro eliminado correctamente",
-            libro: libroEliminado
-        });
-    } catch (error) {
-        res.status(500).json({
-            error: "Error al eliminar el libro"
-        });
+    if (!libroEliminado) {
+      return res.status(404).json({
+        error: "Libro no encontrado",
+      });
     }
+
+    res.json({
+      mensaje: "Libro eliminado correctamente",
+      libro: libroEliminado,
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: "Error al eliminar el libro",
+    });
+  }
 });
 app.listen(PORT, () => {
   console.log(`Servidor ejecutándose en http://localhost:${PORT}`);
