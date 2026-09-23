@@ -5,6 +5,31 @@ const express = require("express");
 const Libro = require("./models/libro");
 
 const app = express();
+
+app.use((req, res, next) => {
+  const origenesPermitidos = [
+    "http://localhost:3000",
+    "https://lamusaincarnata.com",
+    "https://www.lamusaincarnata.com",
+  ];
+
+  const origen = req.headers.origin;
+
+  if (origenesPermitidos.includes(origen)) {
+    res.header("Access-Control-Allow-Origin", origen);
+  }
+
+  res.header("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+
+  res.header("Access-Control-Allow-Headers", "Content-Type");
+
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(204);
+  }
+
+  next();
+});
+
 app.use("/admin", express.static("../admin"));
 app.use(express.json());
 
