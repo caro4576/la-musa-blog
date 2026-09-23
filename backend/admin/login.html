@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Acceso — La Musa Incarnata</title>
+  <style>
+    :root{--negro:#181516;--negro-suave:#211d1d;--hueso:#e8dfd5;--gris:#8d8580;--gris-claro:#b9afa8;--vino:#632832;--vino-oscuro:#401b22;--blanco:#f2eee9;--borde:rgba(232,223,213,.13)}
+    *{box-sizing:border-box}
+    body{margin:0;min-height:100vh;background:var(--negro);color:var(--hueso);font-family:Arial,Helvetica,sans-serif;display:grid;place-items:center;padding:24px}
+    .login{width:min(430px,100%);background:var(--negro-suave);border:1px solid var(--borde);padding:42px}
+    .kicker{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--gris-claro)}
+    h1{font-family:Georgia,"Times New Roman",serif;font-weight:normal;font-size:38px;line-height:1.05;margin:9px 0 8px}
+    p{color:var(--gris);font-size:14px;margin:0 0 30px}
+    label{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.15em;color:var(--gris-claro);margin:18px 0 8px}
+    input{width:100%;border:1px solid rgba(232,223,213,.16);background:rgba(24,21,22,.72);color:var(--hueso);padding:13px 14px;outline:none;border-radius:0}
+    input:focus{border-color:rgba(99,40,50,.9)}
+    button{width:100%;border:1px solid var(--vino);background:var(--vino);color:var(--blanco);padding:13px 17px;margin-top:24px;text-transform:uppercase;letter-spacing:.12em;font-size:10px;cursor:pointer}
+    button:hover{background:var(--vino-oscuro)}
+    .error{min-height:20px;margin-top:15px;color:#c99595;font-size:12px}
+    .footer{margin-top:30px;color:var(--gris);font-size:10px;letter-spacing:.08em}
+  </style>
+</head>
+<body>
+  <main class="login">
+    <span class="kicker">LA MUSA INCARNATA</span>
+    <h1>Acceso privado</h1>
+    <p>Ingresá para administrar el contenido de La Musa.</p>
+    <form id="login-form">
+      <label for="usuario">Usuario</label>
+      <input id="usuario" name="usuario" autocomplete="username" required>
+      <label for="password">Contraseña</label>
+      <input id="password" name="password" type="password" autocomplete="current-password" required>
+      <button type="submit">Ingresar</button>
+      <div class="error" id="error" role="alert"></div>
+    </form>
+    <div class="footer">Panel privado · 2026</div>
+  </main>
+  <script src="/admin/login.js"></script>
+</body>
+</html>
