@@ -1,3 +1,12 @@
+const botonLogout = document.querySelector("#btn-logout");
+
+if (botonLogout) {
+  botonLogout.addEventListener("click", async () => {
+    await fetch("/api/logout", { method: "POST" });
+    window.location.href = "/admin/login.html";
+  });
+}
+
 const listaObras = document.querySelector("#lista-obras");
 const formObra = document.querySelector("#form-obra");
 
