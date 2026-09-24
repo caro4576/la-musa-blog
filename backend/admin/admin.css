@@ -215,3 +215,13 @@ input:focus,textarea:focus{border-color:rgba(99,40,50,.9);background:rgba(24,21,
     .section-heading h2{font-size:32px}
     .admin-card,.list-card{padding:20px}
 }
+
+
+.form-help{
+    display:block;
+    margin-top:-6px;
+    margin-bottom:14px;
+    color:var(--gris);
+    font-size:12px;
+    line-height:1.5;
+}
