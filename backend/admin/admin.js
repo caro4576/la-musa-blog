@@ -16,6 +16,8 @@ const editarCategoria = document.querySelector("#editar-categoria");
 const cancelarEdicion = document.querySelector("#cancelar-edicion");
 const descripcion = document.querySelector("#descripcion");
 const editarDescripcion = document.querySelector("#editar-descripcion");
+const imagen = document.querySelector("#imagen");
+const editarImagen = document.querySelector("#editar-imagen");
 const listaEscrituras = document.querySelector("#lista-escrituras");
 const formEscritura = document.querySelector("#form-escritura");
 
@@ -46,6 +48,7 @@ function cargarObras() {
           editarTitulo.value = obra.titulo;
           editarCategoria.value = obra.categoria;
           editarDescripcion.value = obra.descripcion || "";
+          editarImagen.value = obra.imagen || "";
 
           formEditarObra.style.display = "block";
         });
@@ -90,6 +93,7 @@ formObra.addEventListener("submit", (event) => {
   const titulo = document.querySelector("#titulo").value;
   const categoria = document.querySelector("#categoria").value;
   const descripcion = document.querySelector("#descripcion").value;
+  const imagenValue = imagen.value;
 
   fetch("https://api.lamusaincarnata.com/api/obras", {
     method: "POST",
@@ -120,6 +124,7 @@ formEditarObra.addEventListener("submit", (event) => {
   const nuevoTitulo = editarTitulo.value;
   const nuevaCategoria = editarCategoria.value;
   const nuevaDescripcion = editarDescripcion.value;
+  const nuevaImagen = editarImagen.value;
 
   fetch(`https://api.lamusaincarnata.com/api/obras/${obraEditandoId}`, {
     method: "PUT",
@@ -130,8 +135,9 @@ formEditarObra.addEventListener("submit", (event) => {
       titulo: nuevoTitulo,
       categoria: nuevaCategoria,
       descripcion: nuevaDescripcion,
-    }),
-  })
+        imagen: nuevaImagen,
+      }),
+    })
     .then((response) => response.json())
     .then((resultado) => {
       console.log("Obra actualizada:", resultado);
