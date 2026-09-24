@@ -106,6 +106,7 @@ formObra.addEventListener("submit", (event) => {
       titulo: titulo,
       categoria: categoria,
       descripcion: descripcion,
+      imagen: imagenValue,
     }),
   })
     .then((response) => response.json())
