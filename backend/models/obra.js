@@ -13,7 +13,11 @@ const obraSchema = new mongoose.Schema({
 
   descripcion: {
     type: String,
-  }
+  },
+
+  imagen: {
+    type: String,
+  },
 });
 
 const Obra = mongoose.model("Obra", obraSchema);
