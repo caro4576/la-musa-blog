@@ -112,6 +112,7 @@ formObra.addEventListener("submit", (event) => {
     .then((response) => response.json())
     .then((obra) => {
       console.log("Obra creada:", obra);
+      formObra.reset();
 
       cargarObras();
     })
