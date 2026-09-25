@@ -96,6 +96,7 @@ app.use((req, res, next) => {
     "http://localhost:3000",
     "https://lamusaincarnata.com",
     "https://www.lamusaincarnata.com",
+    "https://la-musa-blog.vercel.app",
   ];
 
   const origen = req.headers.origin;
