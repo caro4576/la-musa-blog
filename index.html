@@ -176,82 +176,75 @@
         </section>
 
 
-            <!-- ================= LIBROS ================= -->
-
-            <section class="section section--books" id="libros">
-
-                <div class="section__header">
-
-                    <h2>Libros</h2>
+        <!-- ================= LIBROS ================= -->
+        
+        <section class="section section--books" id="libros">
+        
+            <div class="section__header">
+                <h2>Libros</h2>
+            </div>
+        
+            <div class="books__content" id="libro-dinamico">
+        
+                <!-- PORTADA -->
+        
+                <div class="books__cover">
+        
+                    <img src="assets/img/portada-reino.png" alt="Portada del libro">
+        
                 </div>
-
-                <div class="books__content">
-
-                    <!-- PORTADA -->
-
-                    <div class="books__cover">
-
-                        <img src="assets/img/portada-reino.png" alt="Portada de El Arte de Construir un Reino">
-
+        
+                <!-- INFORMACIÓN -->
+        
+                <div class="books__info">
+        
+                    <span class="book__year" id="libro-fecha">
+                        Lanzamiento
+                    </span>
+        
+                    <h3 id="libro-titulo">
+                        Cargando libro...
+                    </h3>
+        
+                    <div id="libro-descripcion">
+                        <p>Cargando información...</p>
                     </div>
-
-                    <!-- INFORMACIÓN -->
-
-                    <div class="books__info">
-
-                        <span class="book__year">
-                            Lanzamiento · 11.09.2026
-                        </span>
-
-                        <h3>
-                            El Arte de<br>
-                            Construir<br>
-                            un Reino
-                        </h3>
-
-                        <p>
-                            Una obra escrita por Joaquín Vignatte,
-                            donde pensamiento, estrategia, literatura
-                            y creación se encuentran.
-                        </p>
-
-                        <p>
-                            Un proyecto nacido de un proceso de
-                            escritura y reflexión desarrollado en Italia.
-                        </p>
-
-                        <div class="books__actions">
-                            <a href="el-arte-de-construir-un-reino.html" class="link-arrow">
-                                Ver el proyecto →
-                            </a>
-
-                            <a href="https://mpago.la/2V2nYtL" class="button button--primary" target="_blank"
-                                rel="noopener">
-                                Comprar el libro →
-                            </a>
-                        </div>
-                        <div class="books__delivery">
-                        
-                            <p>
-                                <strong>¿Cómo recibís el libro?</strong>
-                            </p>
-                        
-                            <p>
-                                Realizá el pago y enviá el comprobante junto con tu email
-                                por WhatsApp. Te enviaremos el PDF directamente a tu correo.
-                            </p>
-                        
-                            <a href="https://wa.me/5492266471054?text=Hola%20Joaqu%C3%ADn%2C%20compr%C3%A9%20El%20Arte%20de%20Construir%20un%20Reino.%20Te%20env%C3%ADo%20el%20comprobante%20y%20mi%20email%20para%20recibir%20el%20PDF."
-                                class="link-arrow" target="_blank" rel="noopener">
-                                Enviar comprobante →
-                            </a>
-                        
-                        </div>
-
+        
+                    <div class="books__actions">
+        
+                        <a href="#" class="link-arrow" id="libro-enlace" style="display: none;">
+                            Ver el proyecto →
+                        </a>
+        
+                        <a href="https://mpago.la/2V2nYtL" class="button button--primary" target="_blank" rel="noopener">
+                            Comprar el libro →
+                        </a>
+        
                     </div>
-
-
-            </section>
+        
+                    <div class="books__delivery">
+        
+                        <p>
+                            <strong>¿Cómo recibís el libro?</strong>
+                        </p>
+        
+                        <p>
+                            Realizá el pago y enviá el comprobante junto con tu email
+                            por WhatsApp. Te enviaremos el PDF directamente a tu correo.
+                        </p>
+        
+                        <a href="https://wa.me/5492266471054?text=Hola%20Joaqu%C3%ADn%2C%20compr%C3%A9%20El%20Arte%20de%20Construir%20un%20Reino.%20Te%20env%C3%ADo%20el%20comprobante%20y%20mi%20email%20para%20recibir%20el%20PDF."
+                            class="link-arrow" target="_blank" rel="noopener">
+                            Enviar comprobante →
+                        </a>
+        
+                    </div>
+        
+                </div>
+        
+            </div>
+        
+        </section>
 
 
             <!-- ================= SOBRE ================= -->
@@ -468,6 +461,7 @@
 
         <script src="js/main.js"></script>
         <script src="js/escritura.js"></script>
+        <script src="js/libro.js"></script>
 
     </body>
 
