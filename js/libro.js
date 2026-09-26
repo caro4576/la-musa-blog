@@ -3,7 +3,7 @@ const libroTitulo = document.querySelector("#libro-titulo");
 const libroDescripcion = document.querySelector("#libro-descripcion");
 const libroEnlace = document.querySelector("#libro-enlace");
 
-const API_URL = "https://api.lamusaincarnata.com/api/libros";
+const LIBROS_API_URL = "https://api.lamusaincarnata.com/api/libros";
 
 function escaparHTML(valor = "") {
   return String(valor)
@@ -16,7 +16,7 @@ function escaparHTML(valor = "") {
 
 async function cargarLibro() {
   try {
-    const response = await fetch(API_URL);
+    const response = await fetch(LIBROS_API_URL);
 
     if (!response.ok) {
       throw new Error("No se pudieron obtener los libros.");
