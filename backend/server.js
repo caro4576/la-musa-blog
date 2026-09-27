@@ -7,7 +7,6 @@ const express = require("express");
 const Libro = require("./models/libro");
 const path = require("path");
 const crypto = require("crypto");
-const Perfil = require("./models/perfil");
 
 const app = express();
 
@@ -80,15 +79,8 @@ function tokenAdminValido(token) {
   }
 }
 
-function nombreCookieAdmin(req) {
-  const host = req.headers.host || "";
-  return host.startsWith("localhost") || host.startsWith("127.0.0.1")
-    ? "LaMusaAdmin"
-    : "__Host-LaMusaAdmin";
-}
-
 function adminAutenticado(req) {
-  return tokenAdminValido(obtenerCookie(req, nombreCookieAdmin(req)));
+  return tokenAdminValido(obtenerCookie(req, "__Host-LaMusaAdmin"));
 }
 
 function requireAdmin(req, res, next) {
@@ -130,7 +122,7 @@ app.use((req, res, next) => {
 
 const adminPath = path.join(__dirname, "admin");
 
-app.use(express.json({ limit: "8mb" }));
+app.use(express.json());
 
 app.get("/admin/login.html", (req, res) => {
   res.sendFile(path.join(adminPath, "login.html"));
@@ -162,24 +154,18 @@ app.post("/api/login", (req, res) => {
 
   const token = crearTokenAdmin(usuario);
 
-  const cookieNombre = nombreCookieAdmin(req);
-  const atributoSecure = cookieNombre === "__Host-LaMusaAdmin" ? " Secure;" : "";
-
   res.setHeader(
     "Set-Cookie",
-    `${cookieNombre}=${token}; Max-Age=${ADMIN_SESSION_MS / 1000}; Path=/; HttpOnly;${atributoSecure} SameSite=Strict`,
+    `__Host-LaMusaAdmin=${token}; Max-Age=${ADMIN_SESSION_MS / 1000}; Path=/; HttpOnly; Secure; SameSite=Strict`,
   );
 
   res.json({ ok: true });
 });
 
 app.post("/api/logout", (req, res) => {
-  const cookieNombre = nombreCookieAdmin(req);
-  const atributoSecure = cookieNombre === "__Host-LaMusaAdmin" ? " Secure;" : "";
-
   res.setHeader(
     "Set-Cookie",
-    `${cookieNombre}=; Max-Age=0; Path=/; HttpOnly;${atributoSecure} SameSite=Strict`,
+    "__Host-LaMusaAdmin=; Max-Age=0; Path=/; HttpOnly; Secure; SameSite=Strict",
   );
 
   res.json({ ok: true });
@@ -297,47 +283,8 @@ app.delete("/api/obras/:id", requireAdmin, async (req, res) => {
   }
 });
 // ===============================
- // PERFIL DEL ARTISTA
- // ===============================
-
-app.get("/api/perfil", async (req, res) => {
-  try {
-    let perfil = await Perfil.findOne();
-
-    if (!perfil) {
-      perfil = new Perfil();
-      await perfil.save();
-    }
-
-    res.json(perfil);
-  } catch (error) {
-    res.status(500).json({
-      error: "Error al obtener el perfil",
-    });
-  }
-});
-
-app.put("/api/perfil", requireAdmin, async (req, res) => {
-  try {
-    const { eyebrow, titulo, statement, texto1, texto2, texto3 } = req.body;
-
-    const perfil = await Perfil.findOneAndUpdate(
-      {},
-      { eyebrow, titulo, statement, texto1, texto2, texto3 },
-      { new: true, upsert: true, runValidators: true, setDefaultsOnInsert: true },
-    );
-
-    res.json(perfil);
-  } catch (error) {
-    res.status(400).json({
-      error: "Error al actualizar el perfil",
-    });
-  }
-});
-
+// CRUD DE ESCRITURAS
 // ===============================
- // CRUD DE ESCRITURAS
- // ===============================
 
 // GET todas las escrituras
 app.get("/api/escrituras", async (req, res) => {
