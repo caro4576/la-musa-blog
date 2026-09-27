@@ -245,7 +245,46 @@
         </section>
 
         <footer class="admin-footer">La Musa Incarnata · Panel privado de gestión de contenido</footer>
-    </main>
+    
+        <section id="admin-perfil" class="admin-section">
+            <div class="section-heading">
+                <div>
+                    <span class="section-number">04</span>
+                    <h2>Sobre Joaquín</h2>
+                </div>
+                <p>Este contenido aparece en la sección Sobre del sitio.</p>
+            </div>
+
+            <div class="admin-card">
+                <div class="card-heading">
+                    <span>Perfil del artista</span>
+                    <small>EDITAR</small>
+                </div>
+                <form id="form-perfil">
+                    <label for="perfil-eyebrow-admin">Etiqueta</label>
+                    <input type="text" id="perfil-eyebrow-admin" required>
+
+                    <label for="perfil-titulo-admin">Título</label>
+                    <input type="text" id="perfil-titulo-admin" required>
+
+                    <label for="perfil-statement-admin">Frase destacada</label>
+                    <textarea id="perfil-statement-admin" rows="3" required></textarea>
+
+                    <label for="perfil-texto1-admin">Texto 1</label>
+                    <textarea id="perfil-texto1-admin" rows="5" required></textarea>
+
+                    <label for="perfil-texto2-admin">Texto 2</label>
+                    <textarea id="perfil-texto2-admin" rows="5" required></textarea>
+
+                    <label for="perfil-texto3-admin">Texto 3</label>
+                    <textarea id="perfil-texto3-admin" rows="5" required></textarea>
+
+                    <button type="submit" class="btn-primary">Guardar perfil</button>
+                </form>
+            </div>
+        </section>
+
+</main>
 </div>
 
 <script src="admin.js"></script>
