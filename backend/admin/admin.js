@@ -1,8 +1,3 @@
-const API_BASE_URL =
-  window.location.hostname === "localhost"
-    ? "http://localhost:3000/api"
-    : "https://api.lamusaincarnata.com/api";
-
 const botonLogout = document.querySelector("#btn-logout");
 
 if (botonLogout) {
@@ -23,74 +18,10 @@ const descripcion = document.querySelector("#descripcion");
 const editarDescripcion = document.querySelector("#editar-descripcion");
 const imagen = document.querySelector("#imagen");
 const editarImagen = document.querySelector("#editar-imagen");
-const imagenPreview = document.querySelector("#imagen-preview");
-const editarImagenPreview = document.querySelector("#editar-imagen-preview");
-let obraImagenActual = "";
 const listaEscrituras = document.querySelector("#lista-escrituras");
 const formEscritura = document.querySelector("#form-escritura");
 
 let obraEditandoId = null;
-
-function archivoADataURL(archivo) {
-  return new Promise((resolve, reject) => {
-    const lector = new FileReader();
-    lector.onload = () => resolve(lector.result);
-    lector.onerror = () => reject(new Error("No se pudo leer la imagen."));
-    lector.readAsDataURL(archivo);
-  });
-}
-
-function validarImagen(archivo) {
-  if (!archivo) return true;
-
-  const tiposPermitidos = ["image/jpeg", "image/png", "image/webp"];
-
-  if (!tiposPermitidos.includes(archivo.type)) {
-    alert("La imagen debe ser JPG, PNG o WebP.");
-    return false;
-  }
-
-  if (archivo.size > 5 * 1024 * 1024) {
-    alert("La imagen no puede superar los 5 MB.");
-    return false;
-  }
-
-  return true;
-}
-
-function mostrarVistaPrevia(input, preview, src = "") {
-  const archivo = input.files?.[0];
-
-  if (archivo) {
-    if (!validarImagen(archivo)) {
-      input.value = "";
-      preview.hidden = true;
-      preview.removeAttribute("src");
-      return;
-    }
-
-    preview.src = URL.createObjectURL(archivo);
-    preview.hidden = false;
-    return;
-  }
-
-  if (src) {
-    preview.src = src;
-    preview.hidden = false;
-  } else {
-    preview.hidden = true;
-    preview.removeAttribute("src");
-  }
-}
-
-imagen.addEventListener("change", () => {
-  mostrarVistaPrevia(imagen, imagenPreview);
-});
-
-editarImagen.addEventListener("change", () => {
-  mostrarVistaPrevia(editarImagen, editarImagenPreview);
-});
-
 
 // ===============================
 // ADMIN DE OBRAS
@@ -99,7 +30,7 @@ editarImagen.addEventListener("change", () => {
 function cargarObras() {
   listaObras.innerHTML = "";
 
-  fetch("${API_BASE_URL}/obras")
+  fetch("https://api.lamusaincarnata.com/api/obras")
     .then((response) => response.json())
     .then((obras) => {
       obras.forEach((obra) => {
@@ -119,9 +50,7 @@ function cargarObras() {
           editarTitulo.value = obra.titulo;
           editarCategoria.value = obra.categoria;
           editarDescripcion.value = obra.descripcion || "";
-          editarImagen.value = "";
-          obraImagenActual = obra.imagen || "";
-          mostrarVistaPrevia(editarImagen, editarImagenPreview, obraImagenActual);
+          editarImagen.value = obra.imagen || "";
 
           formEditarObra.style.display = "block";
         });
@@ -134,7 +63,7 @@ function cargarObras() {
           if (!confirmar) {
             return;
           }
-          fetch(`${API_BASE_URL}/obras/${obra._id}`, {
+          fetch(`https://api.lamusaincarnata.com/api/obras/${obra._id}`, {
             method: "DELETE",
           })
             .then((response) => response.json())
@@ -160,95 +89,73 @@ function cargarObras() {
 }
 cargarObras();
 
-formObra.addEventListener("submit", async (event) => {
+formObra.addEventListener("submit", (event) => {
   event.preventDefault();
 
   const titulo = document.querySelector("#titulo").value;
   const categoria = document.querySelector("#categoria").value;
   const descripcion = document.querySelector("#descripcion").value;
-  const archivo = imagen.files?.[0];
+  const imagenValue = imagen.value;
 
-  try {
-    if (archivo && !validarImagen(archivo)) return;
+  fetch("https://api.lamusaincarnata.com/api/obras", {
+    method: "POST",
 
-    const imagenValue = archivo ? await archivoADataURL(archivo) : "";
+    headers: {
+      "Content-Type": "application/json",
+    },
 
-    const response = await fetch("${API_BASE_URL}/obras", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        titulo,
-        categoria,
-        descripcion,
-        imagen: imagenValue,
-      }),
+    body: JSON.stringify({
+      titulo: titulo,
+      categoria: categoria,
+      descripcion: descripcion,
+      imagen: imagenValue,
+    }),
+  })
+    .then((response) => response.json())
+    .then((obra) => {
+      console.log("Obra creada:", obra);
+      formObra.reset();
+
+      cargarObras();
+    })
+    .catch((error) => {
+      console.error("Error al crear la obra:", error);
     });
-
-    if (!response.ok) throw new Error("No se pudo crear la obra.");
-
-    const obra = await response.json();
-    console.log("Obra creada:", obra);
-
-    formObra.reset();
-    imagenPreview.hidden = true;
-    imagenPreview.removeAttribute("src");
-    cargarObras();
-  } catch (error) {
-    console.error("Error al crear la obra:", error);
-    alert("No se pudo guardar la obra.");
-  }
 });
-formEditarObra.addEventListener("submit", async (event) => {
+formEditarObra.addEventListener("submit", (event) => {
   event.preventDefault();
 
   const nuevoTitulo = editarTitulo.value;
   const nuevaCategoria = editarCategoria.value;
   const nuevaDescripcion = editarDescripcion.value;
-  const archivo = editarImagen.files?.[0];
+  const nuevaImagen = editarImagen.value;
 
-  try {
-    if (archivo && !validarImagen(archivo)) return;
-
-    const nuevaImagen = archivo
-      ? await archivoADataURL(archivo)
-      : obraImagenActual;
-
-    const response = await fetch(`${API_BASE_URL}/obras/${obraEditandoId}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        titulo: nuevoTitulo,
-        categoria: nuevaCategoria,
-        descripcion: nuevaDescripcion,
+  fetch(`https://api.lamusaincarnata.com/api/obras/${obraEditandoId}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      titulo: nuevoTitulo,
+      categoria: nuevaCategoria,
+      descripcion: nuevaDescripcion,
         imagen: nuevaImagen,
       }),
+    })
+    .then((response) => response.json())
+    .then((resultado) => {
+      console.log("Obra actualizada:", resultado);
+
+      formEditarObra.reset();
+
+      cargarObras();
+    })
+    .catch((error) => {
+      console.error("Error al actualizar la obra:", error);
     });
-
-    if (!response.ok) throw new Error("No se pudo actualizar la obra.");
-
-    const resultado = await response.json();
-    console.log("Obra actualizada:", resultado);
-
-    formEditarObra.reset();
-    obraImagenActual = "";
-    editarImagenPreview.hidden = true;
-    editarImagenPreview.removeAttribute("src");
-    formEditarObra.style.display = "none";
-    cargarObras();
-  } catch (error) {
-    console.error("Error al actualizar la obra:", error);
-    alert("No se pudo actualizar la obra.");
-  }
 });
 cancelarEdicion.addEventListener("click", () => {
   formEditarObra.reset();
-  obraImagenActual = "";
-  editarImagenPreview.hidden = true;
-  editarImagenPreview.removeAttribute("src");
 
   obraEditandoId = null;
 
@@ -261,7 +168,7 @@ cancelarEdicion.addEventListener("click", () => {
 function cargarEscrituras() {
   listaEscrituras.innerHTML = "";
 
-  fetch("${API_BASE_URL}/escrituras")
+  fetch("https://api.lamusaincarnata.com/api/escrituras")
     .then((response) => response.json())
     .then((escrituras) => {
       escrituras.forEach((escritura) => {
@@ -291,7 +198,7 @@ function cargarEscrituras() {
           }
 
           fetch(
-            `${API_BASE_URL}/escrituras/${escritura._id}`,
+            `https://api.lamusaincarnata.com/api/escrituras/${escritura._id}`,
             {
               method: "DELETE",
             },
@@ -326,7 +233,7 @@ formEscritura.addEventListener("submit", (event) => {
   const contenido = document.querySelector("#escritura-contenido").value;
   console.log("Contenido:", contenido);
 
-  fetch("${API_BASE_URL}/escrituras", {
+  fetch("https://api.lamusaincarnata.com/api/escrituras", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -394,7 +301,7 @@ formEditarEscritura.addEventListener("submit", (event) => {
   const nuevoContenido = editarEscrituraContenido.value;
 
   fetch(
-    `${API_BASE_URL}/escrituras/${escrituraEditandoId}`,
+    `https://api.lamusaincarnata.com/api/escrituras/${escrituraEditandoId}`,
     {
       method: "PUT",
       headers: {
@@ -460,7 +367,7 @@ let libroEditandoId = null;
 function cargarLibros() {
   listaLibros.innerHTML = "";
 
-  fetch("${API_BASE_URL}/libros")
+  fetch("https://api.lamusaincarnata.com/api/libros")
     .then((response) => response.json())
     .then((libros) => {
       libros.forEach((libro) => {
@@ -502,7 +409,7 @@ function cargarLibros() {
             return;
           }
 
-          fetch(`${API_BASE_URL}/libros/${libro._id}`, {
+          fetch(`https://api.lamusaincarnata.com/api/libros/${libro._id}`, {
             method: "DELETE",
           })
             .then((response) => response.json())
@@ -542,7 +449,7 @@ formLibro.addEventListener("submit", (event) => {
 
   const enlace = document.querySelector("#libro-enlace").value;
 
-  fetch("${API_BASE_URL}/libros", {
+  fetch("https://api.lamusaincarnata.com/api/libros", {
     method: "POST",
 
     headers: {
@@ -581,7 +488,7 @@ formEditarLibro.addEventListener("submit", (event) => {
   const nuevaFecha = editarLibroFecha.value;
   const nuevoEnlace = editarLibroEnlace.value;
 
-  fetch(`${API_BASE_URL}/libros/${libroEditandoId}`, {
+  fetch(`https://api.lamusaincarnata.com/api/libros/${libroEditandoId}`, {
     method: "PUT",
 
     headers: {
@@ -628,64 +535,3 @@ cancelarEdicionLibro.addEventListener("click", () => {
 // ===============================
 
 cargarLibros();
-
-
-// ===============================
-// ADMIN DE PERFIL
-// ===============================
-
-const formPerfil = document.querySelector("#form-perfil");
-const perfilEyebrowAdmin = document.querySelector("#perfil-eyebrow-admin");
-const perfilTituloAdmin = document.querySelector("#perfil-titulo-admin");
-const perfilStatementAdmin = document.querySelector("#perfil-statement-admin");
-const perfilTexto1Admin = document.querySelector("#perfil-texto1-admin");
-const perfilTexto2Admin = document.querySelector("#perfil-texto2-admin");
-const perfilTexto3Admin = document.querySelector("#perfil-texto3-admin");
-
-async function cargarPerfilAdmin() {
-  try {
-    const response = await fetch("${API_BASE_URL}/perfil");
-    if (!response.ok) throw new Error("No se pudo cargar el perfil.");
-
-    const perfil = await response.json();
-
-    perfilEyebrowAdmin.value = perfil.eyebrow || "";
-    perfilTituloAdmin.value = perfil.titulo || "";
-    perfilStatementAdmin.value = perfil.statement || "";
-    perfilTexto1Admin.value = perfil.texto1 || "";
-    perfilTexto2Admin.value = perfil.texto2 || "";
-    perfilTexto3Admin.value = perfil.texto3 || "";
-  } catch (error) {
-    console.error("Error al cargar el perfil:", error);
-  }
-}
-
-formPerfil.addEventListener("submit", async (event) => {
-  event.preventDefault();
-
-  try {
-    const response = await fetch("${API_BASE_URL}/perfil", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        eyebrow: perfilEyebrowAdmin.value,
-        titulo: perfilTituloAdmin.value,
-        statement: perfilStatementAdmin.value,
-        texto1: perfilTexto1Admin.value,
-        texto2: perfilTexto2Admin.value,
-        texto3: perfilTexto3Admin.value,
-      }),
-    });
-
-    if (!response.ok) throw new Error("No se pudo guardar el perfil.");
-
-    alert("Perfil guardado correctamente.");
-  } catch (error) {
-    console.error("Error al guardar el perfil:", error);
-    alert("No se pudo guardar el perfil.");
-  }
-});
-
-cargarPerfilAdmin();
