@@ -20,6 +20,6 @@ const obraSchema = new mongoose.Schema({
   },
 });
 
-const Obra = mongoose.model("Obra", obraSchema);
+const Obra = mongoose.model("Obra", obraSchema, "¡Obras");
 
 module.exports = Obra;
