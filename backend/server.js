@@ -207,6 +207,25 @@ app.get("/api/obras", async (req, res) => {
     });
   }
 });
+app.get("/api/obras/:id", async (req, res) => {
+  try {
+    const obra = await Obra.findById(req.params.id);
+
+    if (!obra) {
+      return res.status(404).json({
+        mensaje: "Obra no encontrada",
+      });
+    }
+
+    res.json(obra);
+  } catch (error) {
+    res.status(400).json({
+      mensaje: "ID de obra no válido",
+      error: error.message,
+    });
+  }
+});
+
 app.post("/api/obras", requireAdmin, async (req, res) => {
   console.log("DATOS RECIBIDOS:", req.body);
   try {
