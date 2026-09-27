@@ -80,8 +80,15 @@ function tokenAdminValido(token) {
   }
 }
 
+function nombreCookieAdmin(req) {
+  const host = req.headers.host || "";
+  return host.startsWith("localhost") || host.startsWith("127.0.0.1")
+    ? "LaMusaAdmin"
+    : "__Host-LaMusaAdmin";
+}
+
 function adminAutenticado(req) {
-  return tokenAdminValido(obtenerCookie(req, "__Host-LaMusaAdmin"));
+  return tokenAdminValido(obtenerCookie(req, nombreCookieAdmin(req)));
 }
 
 function requireAdmin(req, res, next) {
@@ -155,18 +162,24 @@ app.post("/api/login", (req, res) => {
 
   const token = crearTokenAdmin(usuario);
 
+  const cookieNombre = nombreCookieAdmin(req);
+  const atributoSecure = cookieNombre === "__Host-LaMusaAdmin" ? " Secure;" : "";
+
   res.setHeader(
     "Set-Cookie",
-    `__Host-LaMusaAdmin=${token}; Max-Age=${ADMIN_SESSION_MS / 1000}; Path=/; HttpOnly; Secure; SameSite=Strict`,
+    `${cookieNombre}=${token}; Max-Age=${ADMIN_SESSION_MS / 1000}; Path=/; HttpOnly;${atributoSecure} SameSite=Strict`,
   );
 
   res.json({ ok: true });
 });
 
 app.post("/api/logout", (req, res) => {
+  const cookieNombre = nombreCookieAdmin(req);
+  const atributoSecure = cookieNombre === "__Host-LaMusaAdmin" ? " Secure;" : "";
+
   res.setHeader(
     "Set-Cookie",
-    "__Host-LaMusaAdmin=; Max-Age=0; Path=/; HttpOnly; Secure; SameSite=Strict",
+    `${cookieNombre}=; Max-Age=0; Path=/; HttpOnly;${atributoSecure} SameSite=Strict`,
   );
 
   res.json({ ok: true });
