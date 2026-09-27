@@ -12,11 +12,10 @@ function escaparHTML(valor = "") {
 }
 
 function crearTarjetaObra(obra, indice) {
-  const tarjeta = document.createElement("article");
-  tarjeta.className =
-    indice === 0
-      ? "archive__item archive__item--featured"
-      : "archive__item";
+  const tarjeta = document.createElement("a");
+
+  tarjeta.className = "archive__item";
+  tarjeta.href = `obra-detalle.html?id=${encodeURIComponent(obra._id)}`;
 
   const imagen = obra.imagen
     ? `<img src="${escaparHTML(obra.imagen)}" alt="${escaparHTML(
