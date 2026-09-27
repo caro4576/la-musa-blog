@@ -326,6 +326,7 @@ formEscritura.addEventListener("submit", (event) => {
 
   fetch("https://api.lamusaincarnata.com/api/escrituras", {
     method: "POST",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
     },
@@ -584,6 +585,7 @@ formEditarLibro.addEventListener("submit", (event) => {
 
   fetch(`https://api.lamusaincarnata.com/api/libros/${libroEditandoId}`, {
     method: "PUT",
+    credentials: "include",
 
     headers: {
       "Content-Type": "application/json",
