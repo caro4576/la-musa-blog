@@ -225,3 +225,36 @@ input:focus,textarea:focus{border-color:rgba(99,40,50,.9);background:rgba(24,21,
     font-size:12px;
     line-height:1.5;
 }
+/* ===============================
+   BOTONES DE ACCIÓN
+================================ */
+
+.btn-editar,
+.btn-eliminar {
+    border: 1px solid var(--gris);
+    background: transparent;
+    color: var(--hueso);
+    padding: 8px 14px;
+    margin-left: 8px;
+    font-family: Arial, sans-serif;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-editar:hover {
+    background: var(--hueso);
+    color: var(--negro);
+}
+
+.btn-eliminar {
+    border-color: var(--vino);
+    color: #c99aa0;
+}
+
+.btn-eliminar:hover {
+    background: var(--vino);
+    color: var(--blanco);
+}

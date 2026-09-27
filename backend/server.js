@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 const mongoose = require("mongoose");
 const Obra = require("./models/obra");
 const Escritura = require("./models/escritura");
@@ -68,7 +70,9 @@ function tokenAdminValido(token) {
   if (!coincide) return false;
 
   try {
-    const payload = JSON.parse(Buffer.from(datos, "base64url").toString("utf8"));
+    const payload = JSON.parse(
+      Buffer.from(datos, "base64url").toString("utf8"),
+    );
     return payload.exp > Date.now() && payload.sub === ADMIN_USER;
   } catch {
     return false;
@@ -137,13 +141,10 @@ app.post("/api/login", (req, res) => {
 
   const { usuario, password } = req.body;
 
-  const usuarioCorrecto =
-    typeof usuario === "string" &&
-    usuario === ADMIN_USER;
+  const usuarioCorrecto = typeof usuario === "string" && usuario === ADMIN_USER;
 
   const passwordCorrecta =
-    typeof password === "string" &&
-    password === ADMIN_PASSWORD;
+    typeof password === "string" && password === ADMIN_PASSWORD;
 
   if (!usuarioCorrecto || !passwordCorrecta) {
     return res.status(401).json({

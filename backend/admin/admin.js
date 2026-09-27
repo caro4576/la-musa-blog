@@ -38,9 +38,11 @@ function cargarObras() {
         elemento.textContent = `${obra.titulo} — ${obra.categoria} — ${obra.descripcion || "Sin descripción"}`;
         const botonEliminar = document.createElement("button");
         botonEliminar.textContent = "Eliminar";
+        botonEliminar.className = "btn-eliminar";
 
         const botonEditar = document.createElement("button");
         botonEditar.textContent = "Editar";
+        botonEditar.className = "btn-editar";
 
         botonEditar.addEventListener("click", () => {
           obraEditandoId = obra._id;
@@ -176,6 +178,7 @@ function cargarEscrituras() {
 
         const botonEditar = document.createElement("button");
         botonEditar.textContent = "Editar";
+        botonEditar.className = "btn-editar";
 
         botonEditar.addEventListener("click", () => {
           prepararEdicionEscritura(escritura);
@@ -183,6 +186,7 @@ function cargarEscrituras() {
 
         const botonEliminar = document.createElement("button");
         botonEliminar.textContent = "Eliminar";
+        botonEliminar.className = "btn-eliminar";
 
         botonEliminar.addEventListener("click", () => {
           const confirmar = confirm(
@@ -376,6 +380,7 @@ function cargarLibros() {
         const botonEditar = document.createElement("button");
 
         botonEditar.textContent = "Editar";
+        botonEditar.className = "btn-editar";
 
         botonEditar.addEventListener("click", () => {
           libroEditandoId = libro._id;
@@ -393,6 +398,7 @@ function cargarLibros() {
         const botonEliminar = document.createElement("button");
 
         botonEliminar.textContent = "Eliminar";
+        botonEliminar.className = "btn-eliminar";
 
         botonEliminar.addEventListener("click", () => {
           const confirmar = confirm(
