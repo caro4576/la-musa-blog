@@ -94,7 +94,7 @@ editarImagen.addEventListener("change", () => {
 function cargarObras() {
   listaObras.innerHTML = "";
 
-  fetch("https://api.lamusaincarnata.com/api/obras")
+  fetch("https://api.lamusaincarnata.com/api/obras", { credentials: "include" })
     .then((response) => response.json())
     .then((obras) => {
       obras.forEach((obra) => {
@@ -131,6 +131,7 @@ function cargarObras() {
           }
           fetch(`https://api.lamusaincarnata.com/api/obras/${obra._id}`, {
             method: "DELETE",
+            credentials: "include",
           })
             .then((response) => response.json())
             .then((resultado) => {
@@ -170,6 +171,7 @@ formObra.addEventListener("submit", async (event) => {
 
     const response = await fetch("https://api.lamusaincarnata.com/api/obras", {
       method: "POST",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
@@ -212,6 +214,7 @@ formEditarObra.addEventListener("submit", async (event) => {
 
     const response = await fetch(`https://api.lamusaincarnata.com/api/obras/${obraEditandoId}`, {
       method: "PUT",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
@@ -392,6 +395,7 @@ formEditarEscritura.addEventListener("submit", (event) => {
     `https://api.lamusaincarnata.com/api/escrituras/${escrituraEditandoId}`,
     {
       method: "PUT",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
@@ -499,6 +503,7 @@ function cargarLibros() {
 
           fetch(`https://api.lamusaincarnata.com/api/libros/${libro._id}`, {
             method: "DELETE",
+            credentials: "include",
           })
             .then((response) => response.json())
             .then((resultado) => {
@@ -639,7 +644,7 @@ const perfilTexto3Admin = document.querySelector("#perfil-texto3-admin");
 
 async function cargarPerfilAdmin() {
   try {
-    const response = await fetch("https://api.lamusaincarnata.com/api/perfil");
+    const response = await fetch("https://api.lamusaincarnata.com/api/perfil", { credentials: "include" });
     if (!response.ok) throw new Error("No se pudo cargar el perfil.");
 
     const perfil = await response.json();
@@ -661,6 +666,7 @@ formPerfil.addEventListener("submit", async (event) => {
   try {
     const response = await fetch("https://api.lamusaincarnata.com/api/perfil", {
       method: "PUT",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
