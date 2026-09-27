@@ -2,6 +2,40 @@ const contenedorObras = document.querySelector("#obras-dinamicas");
 
 const API_URL = "https://api.lamusaincarnata.com/api/obras";
 
+// Respaldo de las obras originales del sitio.
+// Se usa solamente si la API está vacía o temporalmente inaccesible.
+// No modifica CSS ni la sección Libros.
+const OBRAS_RESPALDO = [
+  {
+    _id: "la-criatura",
+    titulo: "La criatura",
+    categoria: "Ilustración",
+    descripcion: "",
+    imagen: "assets/img/01-La criatura.png",
+  },
+  {
+    _id: "personaje",
+    titulo: "Personaje alado",
+    categoria: "Personaje",
+    descripcion: "",
+    imagen: "assets/img/02-Personaje.png",
+  },
+  {
+    _id: "alienigena",
+    titulo: "Alienígena",
+    categoria: "Personaje",
+    descripcion: "",
+    imagen: "assets/img/02-Personaje(2).png",
+  },
+  {
+    _id: "diseno-de-personaje",
+    titulo: "Diseño de personaje",
+    categoria: "Diseño de personaje",
+    descripcion: "",
+    imagen: "assets/img/el.png",
+  },
+];
+
 function escaparHTML(valor = "") {
   return String(valor)
     .replaceAll("&", "&amp;")
@@ -11,11 +45,23 @@ function escaparHTML(valor = "") {
     .replaceAll("'", "&#039;");
 }
 
-function crearTarjetaObra(obra, indice) {
+function crearTarjetaObra(obra, indice, esRespaldo = false) {
   const tarjeta = document.createElement("a");
 
   tarjeta.className = "archive__item";
-  tarjeta.href = `obra-detalle.html?id=${encodeURIComponent(obra._id)}`;
+
+  if (esRespaldo) {
+    const destinos = {
+      "la-criatura": "la-criatura.html",
+      personaje: "personaje.html",
+      alienigena: "vigna.html",
+      "diseno-de-personaje": "diseno-de-personaje.html",
+    };
+
+    tarjeta.href = destinos[obra._id] || "obra.html";
+  } else {
+    tarjeta.href = `obra-detalle.html?id=${encodeURIComponent(obra._id)}`;
+  }
 
   const imagen = obra.imagen
     ? `<img src="${escaparHTML(obra.imagen)}" alt="${escaparHTML(
@@ -48,6 +94,16 @@ function crearTarjetaObra(obra, indice) {
   return tarjeta;
 }
 
+function mostrarObras(obras, esRespaldo = false) {
+  contenedorObras.innerHTML = "";
+
+  obras.forEach((obra, indice) => {
+    contenedorObras.appendChild(
+      crearTarjetaObra(obra, indice, esRespaldo),
+    );
+  });
+}
+
 async function cargarObrasPublicas() {
   try {
     const response = await fetch(API_URL);
@@ -58,22 +114,19 @@ async function cargarObrasPublicas() {
 
     const obras = await response.json();
 
-    contenedorObras.innerHTML = "";
-
-    if (!obras.length) {
-      contenedorObras.innerHTML =
-        '<p class="archive__empty">Todavía no hay obras publicadas.</p>';
+    // Si la API responde vacía, NO dejamos la página vacía:
+    // mostramos las obras originales que ya estaban en La Musa.
+    if (!Array.isArray(obras) || !obras.length) {
+      mostrarObras(OBRAS_RESPALDO, true);
       return;
     }
 
-    obras.forEach((obra, indice) => {
-      contenedorObras.appendChild(crearTarjetaObra(obra, indice));
-    });
+    mostrarObras(obras);
   } catch (error) {
     console.error("Error al cargar las obras:", error);
 
-    contenedorObras.innerHTML =
-      '<p class="archive__empty">No se pudo cargar el archivo de obras.</p>';
+    // Respaldo visual: la obra existente sigue visible aunque el API falle.
+    mostrarObras(OBRAS_RESPALDO, true);
   }
 }
 
