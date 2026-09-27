@@ -7,6 +7,7 @@ const express = require("express");
 const Libro = require("./models/libro");
 const path = require("path");
 const crypto = require("crypto");
+const Perfil = require("./models/perfil");
 
 const app = express();
 
@@ -122,7 +123,7 @@ app.use((req, res, next) => {
 
 const adminPath = path.join(__dirname, "admin");
 
-app.use(express.json());
+app.use(express.json({ limit: "8mb" }));
 
 app.get("/admin/login.html", (req, res) => {
   res.sendFile(path.join(adminPath, "login.html"));
@@ -283,8 +284,47 @@ app.delete("/api/obras/:id", requireAdmin, async (req, res) => {
   }
 });
 // ===============================
-// CRUD DE ESCRITURAS
+ // PERFIL DEL ARTISTA
+ // ===============================
+
+app.get("/api/perfil", async (req, res) => {
+  try {
+    let perfil = await Perfil.findOne();
+
+    if (!perfil) {
+      perfil = new Perfil();
+      await perfil.save();
+    }
+
+    res.json(perfil);
+  } catch (error) {
+    res.status(500).json({
+      error: "Error al obtener el perfil",
+    });
+  }
+});
+
+app.put("/api/perfil", requireAdmin, async (req, res) => {
+  try {
+    const { eyebrow, titulo, statement, texto1, texto2, texto3 } = req.body;
+
+    const perfil = await Perfil.findOneAndUpdate(
+      {},
+      { eyebrow, titulo, statement, texto1, texto2, texto3 },
+      { new: true, upsert: true, runValidators: true, setDefaultsOnInsert: true },
+    );
+
+    res.json(perfil);
+  } catch (error) {
+    res.status(400).json({
+      error: "Error al actualizar el perfil",
+    });
+  }
+});
+
 // ===============================
+ // CRUD DE ESCRITURAS
+ // ===============================
 
 // GET todas las escrituras
 app.get("/api/escrituras", async (req, res) => {
