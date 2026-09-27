@@ -9,7 +9,7 @@ form.addEventListener("submit", async (event) => {
   const password = document.querySelector("#password").value;
 
   try {
-    const response = await fetch("/api/login", {
+    const response = await fetch("https://api.lamusaincarnata.com/api/login", { credentials: "include",
       method: "POST",
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify({ usuario, password }),
