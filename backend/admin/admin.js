@@ -292,6 +292,7 @@ function cargarEscrituras() {
             `https://api.lamusaincarnata.com/api/escrituras/${escritura._id}`,
             {
               method: "DELETE",
+              credentials: "include",
             },
           )
             .then((response) => response.json())
