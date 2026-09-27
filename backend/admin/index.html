@@ -21,6 +21,7 @@
             <a href="#admin-obras">Obras</a>
             <a href="#admin-escrituras">Escrituras</a>
             <a href="#admin-libros">Libros</a>
+            <a href="#admin-perfil">Sobre Joaquín</a>
         </nav>
 
         <div class="sidebar-footer">Joaquín Vignatte · 2026</div>
@@ -66,8 +67,11 @@
                         <textarea id="descripcion" placeholder="Descripción de la obra" rows="6"></textarea>
 
                         <label for="imagen">Imagen</label>
-                        <input type="text" id="imagen" placeholder="Ej.: assets/img/mi-obra.png">
-                        <small class="form-help">Por ahora indicá la ruta o URL de la imagen. La subida directa de archivos la agregaremos después.</small>
+                        <input type="file" id="imagen" accept="image/png,image/jpeg,image/webp">
+                        <small class="form-help">JPG, PNG o WebP · máximo 5 MB. También podés arrastrar el archivo al selector.</small>
+                        <div class="image-preview-wrap">
+                            <img id="imagen-preview" class="image-preview" alt="Vista previa de la obra" hidden>
+                        </div>
 
                         <button type="submit" class="btn-primary">Guardar obra</button>
                     </form>
@@ -89,8 +93,11 @@
                         <textarea id="editar-descripcion" placeholder="Descripción de la obra" rows="6"></textarea>
 
                         <label for="editar-imagen">Imagen</label>
-                        <input type="text" id="editar-imagen" placeholder="Ej.: assets/img/mi-obra.png">
-                        <small class="form-help">Ruta o URL de la imagen.</small>
+                        <input type="file" id="editar-imagen" accept="image/png,image/jpeg,image/webp">
+                        <small class="form-help">Elegí una nueva imagen solo si querés reemplazar la actual.</small>
+                        <div class="image-preview-wrap">
+                            <img id="editar-imagen-preview" class="image-preview" alt="Vista previa de la obra" hidden>
+                        </div>
 
                         <div class="form-actions">
                             <button type="submit" class="btn-primary">Guardar cambios</button>
