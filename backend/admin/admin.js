@@ -1,3 +1,8 @@
+const API_BASE_URL =
+  window.location.hostname === "localhost"
+    ? "http://localhost:3000/api"
+    : "https://api.lamusaincarnata.com/api";
+
 const botonLogout = document.querySelector("#btn-logout");
 
 if (botonLogout) {
@@ -94,7 +99,7 @@ editarImagen.addEventListener("change", () => {
 function cargarObras() {
   listaObras.innerHTML = "";
 
-  fetch("https://api.lamusaincarnata.com/api/obras")
+  fetch("${API_BASE_URL}/obras")
     .then((response) => response.json())
     .then((obras) => {
       obras.forEach((obra) => {
@@ -129,7 +134,7 @@ function cargarObras() {
           if (!confirmar) {
             return;
           }
-          fetch(`https://api.lamusaincarnata.com/api/obras/${obra._id}`, {
+          fetch(`${API_BASE_URL}/obras/${obra._id}`, {
             method: "DELETE",
           })
             .then((response) => response.json())
@@ -168,7 +173,7 @@ formObra.addEventListener("submit", async (event) => {
 
     const imagenValue = archivo ? await archivoADataURL(archivo) : "";
 
-    const response = await fetch("https://api.lamusaincarnata.com/api/obras", {
+    const response = await fetch("${API_BASE_URL}/obras", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -210,7 +215,7 @@ formEditarObra.addEventListener("submit", async (event) => {
       ? await archivoADataURL(archivo)
       : obraImagenActual;
 
-    const response = await fetch(`https://api.lamusaincarnata.com/api/obras/${obraEditandoId}`, {
+    const response = await fetch(`${API_BASE_URL}/obras/${obraEditandoId}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -256,7 +261,7 @@ cancelarEdicion.addEventListener("click", () => {
 function cargarEscrituras() {
   listaEscrituras.innerHTML = "";
 
-  fetch("https://api.lamusaincarnata.com/api/escrituras")
+  fetch("${API_BASE_URL}/escrituras")
     .then((response) => response.json())
     .then((escrituras) => {
       escrituras.forEach((escritura) => {
@@ -286,7 +291,7 @@ function cargarEscrituras() {
           }
 
           fetch(
-            `https://api.lamusaincarnata.com/api/escrituras/${escritura._id}`,
+            `${API_BASE_URL}/escrituras/${escritura._id}`,
             {
               method: "DELETE",
             },
@@ -321,7 +326,7 @@ formEscritura.addEventListener("submit", (event) => {
   const contenido = document.querySelector("#escritura-contenido").value;
   console.log("Contenido:", contenido);
 
-  fetch("https://api.lamusaincarnata.com/api/escrituras", {
+  fetch("${API_BASE_URL}/escrituras", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -389,7 +394,7 @@ formEditarEscritura.addEventListener("submit", (event) => {
   const nuevoContenido = editarEscrituraContenido.value;
 
   fetch(
-    `https://api.lamusaincarnata.com/api/escrituras/${escrituraEditandoId}`,
+    `${API_BASE_URL}/escrituras/${escrituraEditandoId}`,
     {
       method: "PUT",
       headers: {
@@ -455,7 +460,7 @@ let libroEditandoId = null;
 function cargarLibros() {
   listaLibros.innerHTML = "";
 
-  fetch("https://api.lamusaincarnata.com/api/libros")
+  fetch("${API_BASE_URL}/libros")
     .then((response) => response.json())
     .then((libros) => {
       libros.forEach((libro) => {
@@ -497,7 +502,7 @@ function cargarLibros() {
             return;
           }
 
-          fetch(`https://api.lamusaincarnata.com/api/libros/${libro._id}`, {
+          fetch(`${API_BASE_URL}/libros/${libro._id}`, {
             method: "DELETE",
           })
             .then((response) => response.json())
@@ -537,7 +542,7 @@ formLibro.addEventListener("submit", (event) => {
 
   const enlace = document.querySelector("#libro-enlace").value;
 
-  fetch("https://api.lamusaincarnata.com/api/libros", {
+  fetch("${API_BASE_URL}/libros", {
     method: "POST",
 
     headers: {
@@ -576,7 +581,7 @@ formEditarLibro.addEventListener("submit", (event) => {
   const nuevaFecha = editarLibroFecha.value;
   const nuevoEnlace = editarLibroEnlace.value;
 
-  fetch(`https://api.lamusaincarnata.com/api/libros/${libroEditandoId}`, {
+  fetch(`${API_BASE_URL}/libros/${libroEditandoId}`, {
     method: "PUT",
 
     headers: {
@@ -639,7 +644,7 @@ const perfilTexto3Admin = document.querySelector("#perfil-texto3-admin");
 
 async function cargarPerfilAdmin() {
   try {
-    const response = await fetch("https://api.lamusaincarnata.com/api/perfil");
+    const response = await fetch("${API_BASE_URL}/perfil");
     if (!response.ok) throw new Error("No se pudo cargar el perfil.");
 
     const perfil = await response.json();
@@ -659,7 +664,7 @@ formPerfil.addEventListener("submit", async (event) => {
   event.preventDefault();
 
   try {
-    const response = await fetch("https://api.lamusaincarnata.com/api/perfil", {
+    const response = await fetch("${API_BASE_URL}/perfil", {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
