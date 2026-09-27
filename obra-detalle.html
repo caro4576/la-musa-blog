@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Obra de Joaquín Vignatte — La Musa Incarnata">
+    <title>Obra — La Musa Incarnata</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <header class="header">
+        <div class="header__container">
+            <a href="index.html" class="logo">
+                <span>LA MUSA</span>
+                <strong>INCARNATA</strong>
+            </a>
+
+            <button class="nav__button" aria-label="Abrir menú" aria-expanded="false">
+                ☰
+            </button>
+
+            <nav class="nav">
+                <a href="index.html#obra">Obra</a>
+                <a href="index.html#escritura">Escritura</a>
+                <a href="index.html#libros">Libros</a>
+                <a href="index.html#sobre">Sobre</a>
+                <a href="index.html#encargos">Encargos</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="artwork" id="obra-dinamica">
+
+        <section class="artwork__hero">
+            <a href="obra.html" class="artwork__back">← Volver al archivo</a>
+
+            <div class="artwork__label" id="obra-categoria">Cargando obra...</div>
+
+            <h1 id="obra-titulo">Cargando...</h1>
+
+            <p class="artwork__author">Joaquín Vignatte</p>
+
+            <p class="artwork__date">La Musa Incarnata</p>
+        </section>
+
+        <section class="artwork__main-image">
+            <img id="obra-imagen" src="" alt="" style="display: none;">
+            <div id="obra-placeholder" class="archive__placeholder">CARGANDO OBRA</div>
+        </section>
+
+        <section class="artwork__intro">
+
+            <div class="artwork__intro-label">
+                La obra
+            </div>
+
+            <div class="artwork__intro-content">
+                <h2 id="obra-subtitulo">Una nueva pieza del archivo.</h2>
+
+                <div id="obra-descripcion">
+                    <p>La información de la obra se está cargando.</p>
+                </div>
+            </div>
+
+        </section>
+
+        <section class="artwork__closing">
+            <span id="obra-numero">Obra · —</span>
+
+            <h2>
+                El archivo
+                continúa.
+            </h2>
+
+            <a href="obra.html" class="link-arrow">
+                Volver al archivo →
+            </a>
+        </section>
+
+    </main>
+
+    <footer class="footer">
+        <p>© 2026 Joaquín Vignatte</p>
+        <p>La Musa Incarnata</p>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/obra-detalle.js"></script>
+
+</body>
+</html>
