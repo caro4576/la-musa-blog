@@ -2,7 +2,7 @@ const botonLogout = document.querySelector("#btn-logout");
 
 if (botonLogout) {
   botonLogout.addEventListener("click", async () => {
-    await fetch("/api/logout", { method: "POST" });
+    await fetch("https://api.lamusaincarnata.com/api/logout", { method: "POST", credentials: "include" });
     window.location.href = "/admin/login.html";
   });
 }
@@ -259,7 +259,7 @@ cancelarEdicion.addEventListener("click", () => {
 function cargarEscrituras() {
   listaEscrituras.innerHTML = "";
 
-  fetch("https://api.lamusaincarnata.com/api/escrituras")
+  fetch("https://api.lamusaincarnata.com/api/escrituras", { credentials: "include" })
     .then((response) => response.json())
     .then((escrituras) => {
       escrituras.forEach((escritura) => {
@@ -459,7 +459,7 @@ let libroEditandoId = null;
 function cargarLibros() {
   listaLibros.innerHTML = "";
 
-  fetch("https://api.lamusaincarnata.com/api/libros")
+  fetch("https://api.lamusaincarnata.com/api/libros", { credentials: "include" })
     .then((response) => response.json())
     .then((libros) => {
       libros.forEach((libro) => {
@@ -544,6 +544,7 @@ formLibro.addEventListener("submit", (event) => {
 
   fetch("https://api.lamusaincarnata.com/api/libros", {
     method: "POST",
+    credentials: "include",
 
     headers: {
       "Content-Type": "application/json",
