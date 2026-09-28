@@ -99,14 +99,22 @@ function mostrarObras(obras, esRespaldo = false) {
   });
 }
 
+function normalizarTitulo(valor = "") {
+  return String(valor)
+    .normalize("NFD")
+    .replace(/[\\u0300-\\u036f]/g, "")
+    .trim()
+    .toLowerCase();
+}
+
 function combinarObras(obrasAPI) {
   const resultado = [...OBRAS_RESPALDO];
   const titulos = new Set(
-    resultado.map((obra) => String(obra.titulo).trim().toLowerCase()),
+    resultado.map((obra) => normalizarTitulo(obra.titulo)),
   );
 
   for (const obra of obrasAPI) {
-    const titulo = String(obra.titulo || "").trim().toLowerCase();
+    const titulo = normalizarTitulo(obra.titulo);
 
     if (!titulo || titulos.has(titulo)) continue;
 
