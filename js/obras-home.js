@@ -1,6 +1,14 @@
 const contenedorObrasHome = document.querySelector("#obras-home-dinamicas");
 const API_OBRAS_HOME = "https://api.lamusaincarnata.com/api/obras";
 
+function normalizarTitulo(valor = "") {
+  return String(valor)
+    .normalize("NFD")
+    .replace(/[\\u0300-\\u036f]/g, "")
+    .trim()
+    .toLowerCase();
+}
+
 function escaparHTML(valor = "") {
   return String(valor)
     .replaceAll("&", "&amp;")
@@ -46,11 +54,11 @@ async function cargarObrasHome() {
     // las nuevas obras cargadas desde el panel.
     const titulosExistentes = new Set(
       [...contenedorObrasHome.querySelectorAll(".obra__card h3")]
-        .map((titulo) => titulo.textContent.trim().toLowerCase()),
+        .map((titulo) => normalizarTitulo(titulo.textContent)),
     );
 
     obras.forEach((obra) => {
-      const titulo = String(obra.titulo || "").trim().toLowerCase();
+      const titulo = normalizarTitulo(obra.titulo);
 
       if (!titulo || titulosExistentes.has(titulo)) return;
 
