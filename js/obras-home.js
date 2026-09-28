@@ -50,20 +50,12 @@ async function cargarObrasHome() {
     const obras = await response.json();
     if (!Array.isArray(obras) || !obras.length) return;
 
-    // Conservamos las obras originales del sitio y agregamos
-    // las nuevas obras cargadas desde el panel.
-    const titulosExistentes = new Set(
-      [...contenedorObrasHome.querySelectorAll(".obra__card h3")]
-        .map((titulo) => normalizarTitulo(titulo.textContent)),
-    );
+    contenedorObrasHome.innerHTML = "";
 
     obras.forEach((obra) => {
       const titulo = normalizarTitulo(obra.titulo);
-
-      if (!titulo || titulosExistentes.has(titulo)) return;
-
+      if (!titulo) return;
       contenedorObrasHome.appendChild(crearTarjetaObraHome(obra));
-      titulosExistentes.add(titulo);
     });
   } catch (error) {
     // Si la API falla, dejamos intactas las tarjetas estáticas originales.
