@@ -2450,3 +2450,168 @@ a {
     color: var(--gris-claro);
     line-height: 1.5;
 }
+
+/* =========================================================
+   REFINAMIENTO VISUAL — ESPACIADO / UX / UI
+   Ajuste conservador: mantiene la identidad y reduce aire
+   excesivo entre bloques sin rehacer el diseño.
+========================================================= */
+
+.section {
+    padding-top: 100px;
+    padding-bottom: 100px;
+}
+
+.section__heading,
+.section__header {
+    margin-bottom: 45px;
+}
+
+.obra__intro {
+    margin-bottom: 45px;
+}
+
+.obra__featured {
+    gap: 55px;
+}
+
+.writing__content {
+    gap: 70px;
+}
+
+.writing__featured {
+    padding-right: 40px;
+}
+
+.books__content {
+    gap: 70px;
+}
+
+.section--books {
+    padding-top: 100px;
+    padding-bottom: 100px;
+}
+
+.about__content {
+    gap: 70px;
+}
+
+.section--commissions {
+    padding-top: 90px;
+    padding-bottom: 90px;
+}
+
+.commissions__intro {
+    gap: 70px;
+    margin-bottom: 75px;
+}
+
+.commissions__contact {
+    margin-top: 65px;
+}
+
+.support {
+    padding-top: 100px;
+    padding-bottom: 100px;
+}
+
+/* Hover más claro sin exagerar el movimiento */
+.obra__card-image img {
+    transition: transform .45s ease, opacity .45s ease;
+}
+
+.obra__card:hover .obra__card-image img {
+    transform: scale(1.025);
+}
+
+.button,
+.link-arrow,
+.text-link {
+    transition: all .25s ease;
+}
+
+/* Tablet */
+@media (max-width: 900px) {
+    .section {
+        padding-top: 80px;
+        padding-bottom: 80px;
+    }
+
+    .section__heading,
+    .section__header {
+        margin-bottom: 40px;
+    }
+
+    .obra__featured,
+    .writing__content,
+    .books__content,
+    .about__content {
+        gap: 45px;
+    }
+
+    .writing__featured {
+        padding-right: 0;
+    }
+
+    .section--commissions {
+        padding-top: 80px;
+        padding-bottom: 80px;
+    }
+
+    .commissions__intro {
+        gap: 45px;
+        margin-bottom: 60px;
+    }
+
+    .support {
+        padding-top: 80px;
+        padding-bottom: 80px;
+    }
+}
+
+/* Mobile */
+@media (max-width: 650px) {
+    .section {
+        padding-top: 65px;
+        padding-bottom: 65px;
+    }
+
+    .section__heading,
+    .section__header {
+        margin-bottom: 32px;
+    }
+
+    .obra__intro {
+        margin-bottom: 35px;
+    }
+
+    .obra__featured,
+    .writing__content,
+    .books__content,
+    .about__content {
+        gap: 35px;
+    }
+
+    .section--books {
+        padding-top: 65px;
+        padding-bottom: 65px;
+    }
+
+    .section--commissions {
+        padding-top: 65px;
+        padding-bottom: 65px;
+    }
+
+    .commissions__intro {
+        margin-bottom: 50px;
+    }
+
+    .commissions__contact {
+        margin-top: 50px;
+    }
+
+    .support {
+        padding-top: 70px;
+        padding-bottom: 70px;
+    }
+}
