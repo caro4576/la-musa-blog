@@ -72,7 +72,11 @@ async function cargarObrasPublicas() {
       throw new Error("La respuesta de obras no es válida.");
     }
 
-    mostrarObras(obras);
+    const obrasUnicas = Array.from(
+      new Map(obras.map((obra) => [String(obra._id), obra])).values(),
+    );
+
+    mostrarObras(obrasUnicas);
   } catch (error) {
     console.error("Error al cargar las obras:", error);
     mostrarObras([]);
