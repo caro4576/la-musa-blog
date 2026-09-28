@@ -3,8 +3,6 @@ const contenedorObras = document.querySelector("#obras-dinamicas");
 const API_URL = "https://api.lamusaincarnata.com/api/obras";
 
 // Respaldo de las obras originales del sitio.
-// Se usa solamente si la API está vacía o temporalmente inaccesible.
-// No modifica CSS ni la sección Libros.
 const OBRAS_RESPALDO = [
   {
     _id: "la-criatura",
@@ -47,7 +45,6 @@ function escaparHTML(valor = "") {
 
 function crearTarjetaObra(obra, indice, esRespaldo = false) {
   const tarjeta = document.createElement("a");
-
   tarjeta.className = "archive__item";
 
   if (esRespaldo) {
@@ -83,9 +80,7 @@ function crearTarjetaObra(obra, indice, esRespaldo = false) {
 
       <h2>${escaparHTML(obra.titulo)}</h2>
 
-      <p>
-        Joaquín Vignatte
-      </p>
+      <p>Joaquín Vignatte</p>
 
       ${obra.descripcion ? `<p>${escaparHTML(obra.descripcion)}</p>` : ""}
     </div>
@@ -104,6 +99,24 @@ function mostrarObras(obras, esRespaldo = false) {
   });
 }
 
+function combinarObras(obrasAPI) {
+  const resultado = [...OBRAS_RESPALDO];
+  const titulos = new Set(
+    resultado.map((obra) => String(obra.titulo).trim().toLowerCase()),
+  );
+
+  for (const obra of obrasAPI) {
+    const titulo = String(obra.titulo || "").trim().toLowerCase();
+
+    if (!titulo || titulos.has(titulo)) continue;
+
+    resultado.push(obra);
+    titulos.add(titulo);
+  }
+
+  return resultado;
+}
+
 async function cargarObrasPublicas() {
   try {
     const response = await fetch(API_URL);
@@ -114,18 +127,13 @@ async function cargarObrasPublicas() {
 
     const obras = await response.json();
 
-    // Si la API responde vacía, NO dejamos la página vacía:
-    // mostramos las obras originales que ya estaban en La Musa.
-    if (!Array.isArray(obras) || !obras.length) {
-      mostrarObras(OBRAS_RESPALDO, true);
-      return;
+    if (!Array.isArray(obras)) {
+      throw new Error("La respuesta de obras no es válida.");
     }
 
-    mostrarObras(obras);
+    mostrarObras(combinarObras(obras));
   } catch (error) {
     console.error("Error al cargar las obras:", error);
-
-    // Respaldo visual: la obra existente sigue visible aunque el API falle.
     mostrarObras(OBRAS_RESPALDO, true);
   }
 }
