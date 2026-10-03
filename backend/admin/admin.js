@@ -8,6 +8,12 @@ if (botonLogout) {
 }
 
 const listaObras = document.querySelector("#lista-obras");
+
+const API_OBRAS =
+  window.location.hostname === "localhost" ||
+  window.location.hostname === "127.0.0.1"
+    ? "http://localhost:3000/api/obras"
+    : "https://api.lamusaincarnata.com/api/obras";
 const formObra = document.querySelector("#form-obra");
 
 const formEditarObra = document.querySelector("#form-editar-obra");
@@ -94,7 +100,7 @@ editarImagen.addEventListener("change", () => {
 function cargarObras() {
   listaObras.innerHTML = "";
 
-  fetch("https://api.lamusaincarnata.com/api/obras")
+  fetch(API_OBRAS)
     .then((response) => response.json())
     .then((obras) => {
       obras.forEach((obra) => {
@@ -115,7 +121,9 @@ function cargarObras() {
           editarCategoria.value = obra.categoria;
           editarDescripcion.value = obra.descripcion || "";
           editarImagen.value = "";
-          obraImagenActual = obra.imagen || "";
+          obraImagenActual = obra.tieneImagen
+            ? `${API_OBRAS}/${encodeURIComponent(obra._id)}/imagen`
+            : "";
           mostrarVistaPrevia(editarImagen, editarImagenPreview, obraImagenActual);
 
           formEditarObra.style.display = "block";
@@ -129,7 +137,7 @@ function cargarObras() {
           if (!confirmar) {
             return;
           }
-          fetch(`https://api.lamusaincarnata.com/api/obras/${obra._id}`, {
+          fetch(`${API_OBRAS}/${obra._id}`, {
             method: "DELETE",
           })
             .then((response) => response.json())
@@ -168,7 +176,7 @@ formObra.addEventListener("submit", async (event) => {
 
     const imagenValue = archivo ? await archivoADataURL(archivo) : "";
 
-    const response = await fetch("https://api.lamusaincarnata.com/api/obras", {
+    const response = await fetch(API_OBRAS, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -206,21 +214,22 @@ formEditarObra.addEventListener("submit", async (event) => {
   try {
     if (archivo && !validarImagen(archivo)) return;
 
-    const nuevaImagen = archivo
-      ? await archivoADataURL(archivo)
-      : obraImagenActual;
+    const datosActualizacion = {
+      titulo: nuevoTitulo,
+      categoria: nuevaCategoria,
+      descripcion: nuevaDescripcion,
+    };
 
-    const response = await fetch(`https://api.lamusaincarnata.com/api/obras/${obraEditandoId}`, {
+    if (archivo) {
+      datosActualizacion.imagen = await archivoADataURL(archivo);
+    }
+
+    const response = await fetch(`${API_OBRAS}/${obraEditandoId}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        titulo: nuevoTitulo,
-        categoria: nuevaCategoria,
-        descripcion: nuevaDescripcion,
-        imagen: nuevaImagen,
-      }),
+      body: JSON.stringify(datosActualizacion),
     });
 
     if (!response.ok) throw new Error("No se pudo actualizar la obra.");

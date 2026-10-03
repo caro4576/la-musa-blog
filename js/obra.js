@@ -1,6 +1,14 @@
 const contenedorObras = document.querySelector("#obras-dinamicas");
 
-const API_URL = "https://api.lamusaincarnata.com/api/obras";
+const API_URL =
+  window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+    ? "http://localhost:3000/api/obras"
+    : "https://api.lamusaincarnata.com/api/obras";
+
+function obtenerUrlImagen(id) {
+  return API_URL + "/" + encodeURIComponent(id) + "/imagen";
+}
+
 
 function escaparHTML(valor = "") {
   return String(valor)
@@ -17,8 +25,8 @@ function crearTarjetaObra(obra, indice) {
 
   tarjeta.href = `obra-detalle.html?id=${encodeURIComponent(obra._id)}`;
 
-  const imagen = obra.imagen
-    ? `<img src="${escaparHTML(obra.imagen)}" alt="${escaparHTML(
+  const imagen = obra.tieneImagen
+    ? `<img src="${obtenerUrlImagen(obra._id)}" alt="${escaparHTML(
         obra.titulo,
       )}, obra de Joaquín Vignatte">`
     : `<div class="archive__placeholder">IMAGEN PENDIENTE</div>`;

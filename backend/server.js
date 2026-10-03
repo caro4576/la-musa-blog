@@ -99,6 +99,8 @@ function requireAdmin(req, res, next) {
 app.use((req, res, next) => {
   const origenesPermitidos = [
     "http://localhost:3000",
+    "http://localhost:5500",
+    "http://127.0.0.1:5500",
     "https://lamusaincarnata.com",
     "https://www.lamusaincarnata.com",
     "https://la-musa-blog.vercel.app",
@@ -199,8 +201,12 @@ app.get("/", (req, res) => {
 
 app.get("/api/obras", async (req, res) => {
   try {
-    const obras = await Obra.find();
-    res.json(obras);
+    const obras = await Obra.find().lean();
+    const resultado = obras.map(({ imagen, ...obra }) => ({
+      ...obra,
+      tieneImagen: Boolean(imagen),
+    }));
+    res.json(resultado);
   } catch (error) {
     res.status(500).json({
       mensaje: "Error al obtener las obras",
@@ -208,9 +214,38 @@ app.get("/api/obras", async (req, res) => {
     });
   }
 });
+app.get("/api/obras/:id/imagen", async (req, res) => {
+  try {
+    const obra = await Obra.findById(req.params.id).select("imagen");
+
+    if (!obra || !obra.imagen) {
+      return res.status(404).json({ mensaje: "Imagen no encontrada" });
+    }
+
+    const coincidencia = obra.imagen.match(/^data:(image\/[^;]+);base64,(.+)$/s);
+
+    if (!coincidencia) {
+      return res.status(422).json({ mensaje: "Formato de imagen no válido" });
+    }
+
+    const [, tipoMime, contenidoBase64] = coincidencia;
+    const imagenBuffer = Buffer.from(contenidoBase64, "base64");
+
+    res.setHeader("Content-Type", tipoMime);
+    res.setHeader("Content-Disposition", "inline");
+    res.setHeader("Cache-Control", "public, max-age=3600, must-revalidate");
+    res.send(imagenBuffer);
+  } catch (error) {
+    res.status(400).json({
+      mensaje: "No se pudo obtener la imagen",
+      error: error.message,
+    });
+  }
+});
+
 app.get("/api/obras/:id", async (req, res) => {
   try {
-    const obra = await Obra.findById(req.params.id);
+    const obra = await Obra.findById(req.params.id).lean();
 
     if (!obra) {
       return res.status(404).json({
@@ -218,7 +253,11 @@ app.get("/api/obras/:id", async (req, res) => {
       });
     }
 
-    res.json(obra);
+    const { imagen, ...obraPublica } = obra;
+    res.json({
+      ...obraPublica,
+      tieneImagen: Boolean(imagen),
+    });
   } catch (error) {
     res.status(400).json({
       mensaje: "ID de obra no válido",
