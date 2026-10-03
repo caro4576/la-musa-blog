@@ -31,7 +31,7 @@ function crearTarjetaObraHome(obra) {
   tarjeta.className = "obra__card";
   tarjeta.href = `obra-detalle.html?id=${encodeURIComponent(obra._id)}`;
 
-  const imagen = obra._id
+  const imagen = obra.tieneImagen
     ? `<img src="${obtenerUrlImagen(obra._id)}" alt="${escaparHTML(obra.titulo)}, obra de Joaquín Vignatte">`
     : `<div class="obra__card-image">IMAGEN PENDIENTE</div>`;
 
