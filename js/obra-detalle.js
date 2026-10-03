@@ -72,7 +72,7 @@ async function cargarObra() {
         "<p>Esta obra forma parte del archivo visual de La Musa Incarnata.</p>";
     }
 
-    if (obra._id) {
+    if (obra.tieneImagen) {
       imagen.src = obtenerUrlImagen(obra._id);
       imagen.alt = `${obra.titulo}, obra de Joaquín Vignatte`;
       imagen.style.display = "block";
