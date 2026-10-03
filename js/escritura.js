@@ -22,8 +22,8 @@ function crearEscritura(escritura, indice) {
 
   const contenido = String(escritura.contenido || "").trim();
   const extracto =
-    contenido.length > 260
-      ? `${contenido.slice(0, 260).trimEnd()}…`
+    contenido.length > 420
+      ? `${contenido.slice(0, 420).trimEnd()}…`
       : contenido;
 
   articulo.innerHTML = `
