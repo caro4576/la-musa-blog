@@ -199,8 +199,12 @@ app.get("/", (req, res) => {
 
 app.get("/api/obras", async (req, res) => {
   try {
-    const obras = await Obra.find().select("-imagen");
-    res.json(obras);
+    const obras = await Obra.find().lean();
+    const resultado = obras.map(({ imagen, ...obra }) => ({
+      ...obra,
+      tieneImagen: Boolean(imagen),
+    }));
+    res.json(resultado);
   } catch (error) {
     res.status(500).json({
       mensaje: "Error al obtener las obras",
@@ -239,7 +243,7 @@ app.get("/api/obras/:id/imagen", async (req, res) => {
 
 app.get("/api/obras/:id", async (req, res) => {
   try {
-    const obra = await Obra.findById(req.params.id).select("-imagen");
+    const obra = await Obra.findById(req.params.id).lean();
 
     if (!obra) {
       return res.status(404).json({
