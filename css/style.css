@@ -2615,3 +2615,31 @@ a {
         padding-bottom: 70px;
     }
 }
+/* AJUSTE ESCRITURA */
+@media (min-width: 769px) {
+    .writing__content {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        column-gap: 55px;
+        row-gap: 35px;
+        align-items: start;
+    }
+
+    .writing__featured {
+        margin: 0;
+        padding-right: 40px;
+        align-self: start;
+    }
+}
+
+@media (max-width: 768px) {
+    .writing__content {
+        display: block;
+    }
+
+    .writing__featured {
+        width: 100%;
+        margin-bottom: 35px;
+        padding-right: 0;
+    }
+}
