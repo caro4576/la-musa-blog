@@ -1,4 +1,12 @@
-const API_URL = "https://api.lamusaincarnata.com/api/obras";
+const API_URL =
+  window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+    ? "http://localhost:3000/api/obras"
+    : "https://api.lamusaincarnata.com/api/obras";
+
+function obtenerUrlImagen(id) {
+  return API_URL + "/" + encodeURIComponent(id) + "/imagen";
+}
+
 
 const titulo = document.querySelector("#obra-titulo");
 const categoria = document.querySelector("#obra-categoria");
@@ -64,8 +72,8 @@ async function cargarObra() {
         "<p>Esta obra forma parte del archivo visual de La Musa Incarnata.</p>";
     }
 
-    if (obra.imagen) {
-      imagen.src = obra.imagen;
+    if (obra._id) {
+      imagen.src = obtenerUrlImagen(obra._id);
       imagen.alt = `${obra.titulo}, obra de Joaquín Vignatte`;
       imagen.style.display = "block";
       placeholder.style.display = "none";
