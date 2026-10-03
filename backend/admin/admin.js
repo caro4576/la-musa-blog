@@ -214,21 +214,22 @@ formEditarObra.addEventListener("submit", async (event) => {
   try {
     if (archivo && !validarImagen(archivo)) return;
 
-    const nuevaImagen = archivo
-      ? await archivoADataURL(archivo)
-      : obraImagenActual;
+    const datosActualizacion = {
+      titulo: nuevoTitulo,
+      categoria: nuevaCategoria,
+      descripcion: nuevaDescripcion,
+    };
+
+    if (archivo) {
+      datosActualizacion.imagen = await archivoADataURL(archivo);
+    }
 
     const response = await fetch(`${API_OBRAS}/${obraEditandoId}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        titulo: nuevoTitulo,
-        categoria: nuevaCategoria,
-        descripcion: nuevaDescripcion,
-        imagen: nuevaImagen,
-      }),
+      body: JSON.stringify(datosActualizacion),
     });
 
     if (!response.ok) throw new Error("No se pudo actualizar la obra.");
