@@ -1,6 +1,10 @@
 const contenedorEscrituras = document.querySelector("#escrituras-dinamicas");
 
-const API_URL = "https://api.lamusaincarnata.com/api/escrituras";
+const API_URL =
+  window.location.hostname === "localhost" ||
+  window.location.hostname === "127.0.0.1"
+    ? "http://localhost:3000/api/escrituras"
+    : "https://api.lamusaincarnata.com/api/escrituras";
 
 function escaparHTML(valor = "") {
   return String(valor)
