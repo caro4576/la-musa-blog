@@ -253,7 +253,11 @@ app.get("/api/obras/:id", async (req, res) => {
       });
     }
 
-    res.json(obra);
+    const { imagen, ...obraPublica } = obra;
+    res.json({
+      ...obraPublica,
+      tieneImagen: Boolean(imagen),
+    });
   } catch (error) {
     res.status(400).json({
       mensaje: "ID de obra no válido",
