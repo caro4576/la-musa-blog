@@ -18,7 +18,13 @@ function escaparHTML(valor = "") {
 function crearEscritura(escritura, indice) {
   const articulo = document.createElement("article");
 
-  articulo.className = "writing__featured";
+  articulo.className = "writing__card";
+
+  const contenido = String(escritura.contenido || "").trim();
+  const extracto =
+    contenido.length > 260
+      ? `${contenido.slice(0, 260).trimEnd()}…`
+      : contenido;
 
   articulo.innerHTML = `
         <div class="writing__meta">
@@ -31,7 +37,7 @@ function crearEscritura(escritura, indice) {
         </h3>
 
         <p class="writing__excerpt">
-            ${escaparHTML(escritura.contenido)}
+            ${escaparHTML(extracto)}
         </p>
     `;
 
