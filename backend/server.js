@@ -99,6 +99,8 @@ function requireAdmin(req, res, next) {
 app.use((req, res, next) => {
   const origenesPermitidos = [
     "http://localhost:3000",
+    "http://localhost:5500",
+    "http://127.0.0.1:5500",
     "https://lamusaincarnata.com",
     "https://www.lamusaincarnata.com",
     "https://la-musa-blog.vercel.app",
