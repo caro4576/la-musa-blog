@@ -203,12 +203,20 @@ app.get("/", (req, res) => {
 
 app.get("/api/obras", async (req, res) => {
   try {
-    const obras = await Obra.find().select("-imagen").lean();
-    const resultado = obras.map(({ imagen, ...obra }) => ({
-      ...obra,
-      tieneImagen: Boolean(imagen),
-    }));
-    res.json(resultado);
+    const obras = await Obra.aggregate([
+      {
+        $project: {
+          titulo: 1,
+          categoria: 1,
+          descripcion: 1,
+          tieneImagen: {
+            $ne: [{ $ifNull: ["$imagen", ""] }, ""],
+          },
+        },
+      },
+    ]);
+
+    res.json(obras);
   } catch (error) {
     res.status(500).json({
       mensaje: "Error al obtener las obras",
@@ -249,19 +257,31 @@ app.get("/api/obras/:id/imagen", async (req, res) => {
 
 app.get("/api/obras/:id", async (req, res) => {
   try {
-    const obra = await Obra.findById(req.params.id).select("-imagen").lean();
+    const obras = await Obra.aggregate([
+      {
+        $match: {
+          _id: new mongoose.Types.ObjectId(req.params.id),
+        },
+      },
+      {
+        $project: {
+          titulo: 1,
+          categoria: 1,
+          descripcion: 1,
+          tieneImagen: {
+            $ne: [{ $ifNull: ["$imagen", ""] }, ""],
+          },
+        },
+      },
+    ]);
 
-    if (!obra) {
+    if (!obras.length) {
       return res.status(404).json({
         mensaje: "Obra no encontrada",
       });
     }
 
-    const { imagen, ...obraPublica } = obra;
-    res.json({
-      ...obraPublica,
-      tieneImagen: Boolean(imagen),
-    });
+    res.json(obras[0]);
   } catch (error) {
     res.status(400).json({
       mensaje: "ID de obra no válido",
