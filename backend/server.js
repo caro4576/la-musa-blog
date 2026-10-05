@@ -203,7 +203,7 @@ app.get("/", (req, res) => {
 
 app.get("/api/obras", async (req, res) => {
   try {
-    const obras = await Obra.find().lean();
+    const obras = await Obra.find().select("-imagen").lean();
     const resultado = obras.map(({ imagen, ...obra }) => ({
       ...obra,
       tieneImagen: Boolean(imagen),
@@ -249,7 +249,7 @@ app.get("/api/obras/:id/imagen", async (req, res) => {
 
 app.get("/api/obras/:id", async (req, res) => {
   try {
-    const obra = await Obra.findById(req.params.id).lean();
+    const obra = await Obra.findById(req.params.id).select("-imagen").lean();
 
     if (!obra) {
       return res.status(404).json({
