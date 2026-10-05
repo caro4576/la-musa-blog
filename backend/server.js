@@ -101,6 +101,8 @@ app.use((req, res, next) => {
     "http://localhost:3000",
     "http://localhost:5500",
     "http://127.0.0.1:5500",
+    "http://localhost:5501",
+    "http://127.0.0.1:5501",
     "https://lamusaincarnata.com",
     "https://www.lamusaincarnata.com",
     "https://la-musa-blog.vercel.app",
@@ -222,7 +224,9 @@ app.get("/api/obras/:id/imagen", async (req, res) => {
       return res.status(404).json({ mensaje: "Imagen no encontrada" });
     }
 
-    const coincidencia = obra.imagen.match(/^data:(image\/[^;]+);base64,(.+)$/s);
+    const coincidencia = obra.imagen.match(
+      /^data:(image\/[^;]+);base64,(.+)$/s,
+    );
 
     if (!coincidencia) {
       return res.status(422).json({ mensaje: "Formato de imagen no válido" });
@@ -323,8 +327,8 @@ app.delete("/api/obras/:id", requireAdmin, async (req, res) => {
   }
 });
 // ===============================
- // PERFIL DEL ARTISTA
- // ===============================
+// PERFIL DEL ARTISTA
+// ===============================
 
 app.get("/api/perfil", async (req, res) => {
   try {
@@ -350,7 +354,12 @@ app.put("/api/perfil", requireAdmin, async (req, res) => {
     const perfil = await Perfil.findOneAndUpdate(
       {},
       { eyebrow, titulo, statement, texto1, texto2, texto3 },
-      { new: true, upsert: true, runValidators: true, setDefaultsOnInsert: true },
+      {
+        new: true,
+        upsert: true,
+        runValidators: true,
+        setDefaultsOnInsert: true,
+      },
     );
 
     res.json(perfil);
@@ -362,8 +371,8 @@ app.put("/api/perfil", requireAdmin, async (req, res) => {
 });
 
 // ===============================
- // CRUD DE ESCRITURAS
- // ===============================
+// CRUD DE ESCRITURAS
+// ===============================
 
 // GET todas las escrituras
 app.get("/api/escrituras", async (req, res) => {
