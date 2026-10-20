@@ -2211,3 +2211,76 @@ a {
     -webkit-text-stroke: 3px #fff;
     paint-order: stroke fill;
 }
+/* === Escrituras: composición editorial (menos lineal) === */
+#escrituras-dinamicas {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+}
+
+.writing__card {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    column-gap: clamp(30px, 6vw, 90px);
+    align-items: start;
+    padding: 50px 48px;
+}
+
+.writing__card .writing__meta {
+    grid-column: 1;
+    grid-row: 1;
+    margin: 0 0 24px;
+}
+
+.writing__card h3 {
+    grid-column: 1;
+    grid-row: 2;
+    margin: 0;
+    font-size: clamp(34px, 4vw, 56px);
+}
+
+.writing__card .writing__excerpt {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    max-width: none;
+    margin: 0;
+}
+
+/* Las pares se espejan: texto a la izquierda, título a la derecha */
+.writing__card:nth-child(even) {
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+}
+
+.writing__card:nth-child(even) .writing__meta,
+.writing__card:nth-child(even) h3 {
+    grid-column: 2;
+}
+
+.writing__card:nth-child(even) .writing__excerpt {
+    grid-column: 1;
+}
+
+/* Una de cada tres en tono papel, para romper el ritmo */
+.writing__card:nth-child(3n) {
+    background: var(--papel);
+    color: var(--negro);
+}
+
+.writing__card:nth-child(3n) .writing__excerpt {
+    color: #4a433f;
+}
+
+/* Celular: vuelve a una sola columna */
+@media (max-width: 768px) {
+
+    .writing__card,
+    .writing__card:nth-child(even) {
+        display: flex;
+        flex-direction: column;
+        padding: 28px;
+    }
+
+    .writing__card .writing__excerpt {
+        margin-top: 20px;
+    }
+}
