@@ -2118,3 +2118,96 @@ a {
 .state__retry:focus-visible {
     opacity: 0.7;
 }
+/* === Mejoras de accesibilidad y mobile === */
+
+/* Hero: que no se corte con la barra del navegador en el celular */
+.hero {
+    min-height: 100vh;
+    /* respaldo para navegadores viejos */
+    min-height: 100svh;
+}
+
+/* Respetar a quienes desactivan las animaciones en su dispositivo */
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* Textos chicos: subimos los que más cuesta leer */
+.nav,
+.project__author {
+    font-size: 13px;
+}
+
+.hero__eyebrow,
+.hero__link,
+.commission__link,
+.section__number,
+.section__eyebrow,
+.button,
+.books__actions .button,
+.archive__empty {
+    font-size: 12px;
+}
+
+.logo span,
+.obra__category,
+.writing__meta,
+.writing__category,
+.book__year,
+.footer,
+.archive__info>span,
+.archive__info p {
+    font-size: 11px;
+}
+/* === Achicar espacios en Obra (home) === */
+.section--obra {
+    padding-top: 50px;
+}
+
+.section--obra .section__header {
+    margin-bottom: 30px;
+}
+
+.obra__grid {
+    gap: 45px 40px;
+}
+
+.obra__card:nth-child(2) {
+    margin-top: 40px;
+}
+
+.obra__card:nth-child(4) {
+    margin-top: 30px;
+}
+
+@media (max-width: 768px) {
+    .section--obra {
+        padding-top: 30px;
+    }
+
+    .obra__grid {
+        gap: 35px;
+    }
+
+    /* sin desfase en mobile */
+    .obra__card:nth-child(2),
+    .obra__card:nth-child(3),
+    .obra__card:nth-child(4) {
+        margin-top: 0;
+    }
+}
+.hero {
+    min-height: 80svh;
+}
+.hero h1 {
+    -webkit-text-stroke: 3px #fff;
+    paint-order: stroke fill;
+}
